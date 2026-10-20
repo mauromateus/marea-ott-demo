@@ -12,3 +12,9 @@ export const trackInstallPromptShown = () => push(EVENTS.INSTALL_PROMPT_SHOWN)
 export const trackInstallChoice = (outcome) => push(EVENTS.INSTALL_CHOICE, { ms_install_outcome: outcome })
 
 export const trackAppInstalled = () => push(EVENTS.APP_INSTALLED)
+
+/** @param {'chromium'|'ios'} variant */
+export const trackInstallSheetShown = (variant) => push(EVENTS.INSTALL_SHEET_SHOWN, { ms_install_variant: variant })
+
+/** @param {'chromium'|'ios'} variant */
+export const trackInstallSheetDismissed = (variant) => push(EVENTS.INSTALL_SHEET_DISMISSED, { ms_install_variant: variant })

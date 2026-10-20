@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { Button } from 'components/common/Button/Button.styles'
+import { translate } from 'core/Translation'
 import useLiveVideoPlayer from './hooks/useLiveVideoPlayer'
 
 // padding-top keeps 16:9 on browsers without the aspect-ratio property (older TV browsers).
@@ -49,17 +50,17 @@ export default function VideoPlayer () {
   return (
     <Frame>
       <Mount id={containerId} />
-      {status === 'loading' && <Overlay role='status'>Loading live signal...</Overlay>}
+      {status === 'loading' && <Overlay role='status'>{translate('player.loadingLive')}</Overlay>}
       {status === 'evicted' && (
         <Overlay role='status'>
-          <span>The radio is using the player.</span>
-          <Button type='button' onClick={retry}>Resume TV</Button>
+          <span>{translate('player.evicted')}</span>
+          <Button type='button' onClick={retry}>{translate('player.resumeTv')}</Button>
         </Overlay>
       )}
       {status === 'error' && (
         <Overlay role='alert'>
-          <span>The player could not be loaded. Check your connection.</span>
-          <Button type='button' onClick={retry}>Try again</Button>
+          <span>{translate('errors.playerLoad')}</span>
+          <Button type='button' onClick={retry}>{translate('errors.retry')}</Button>
         </Overlay>
       )}
     </Frame>

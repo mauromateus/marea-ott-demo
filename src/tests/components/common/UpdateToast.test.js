@@ -17,7 +17,7 @@ afterEach(() => {
 describe('UpdateToast', () => {
   it('renders nothing without a waiting worker', () => {
     renderToast()
-    expect(screen.queryByText(/new version available/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/nueva versión disponible/i)).not.toBeInTheDocument()
   })
 
   it('appears when a worker is waiting and applies the update on click', () => {
@@ -26,8 +26,8 @@ describe('UpdateToast', () => {
 
     act(() => ServiceWorkerService.setRegistration({ waiting: { postMessage: jest.fn() } }))
 
-    expect(screen.getByText(/new version available/i)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /refresh/i }))
+    expect(screen.getByText(/nueva versión disponible/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /actualizar/i }))
     expect(apply).toHaveBeenCalledTimes(1)
   })
 })

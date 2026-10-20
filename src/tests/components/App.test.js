@@ -44,8 +44,8 @@ describe('App routes', () => {
     renderApp('/')
     expect(await screen.findByRole('heading', { name: 'Marea TV' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Marea Radio' })).toBeInTheDocument()
-    expect(screen.getAllByText('LIVE').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getByText(/Example content/i)).toBeInTheDocument()
+    expect(screen.getAllByText('EN VIVO').length).toBeGreaterThanOrEqual(2)
+    expect(screen.getByText(/contenido de ejemplo/i)).toBeInTheDocument()
     marea.rails.forEach((rail) => expect(screen.getByRole('heading', { name: rail.title })).toBeInTheDocument())
   })
 
@@ -65,18 +65,18 @@ describe('App routes', () => {
 
   it('/radio shows the radio panel and starts audio on play', async () => {
     renderApp('/radio')
-    fireEvent.click(await screen.findByRole('button', { name: /play marea radio/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /reproducir marea radio/i }))
     await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalledTimes(1))
     expect(loadPlayerWithAdapter.mock.calls[0][1]).toMatchObject({ id: marea.players.audio.id })
   })
 
   it('/debug shows the diagnostics and the copy button', async () => {
     renderApp('/debug')
-    expect(await screen.findByRole('heading', { name: 'Debug' })).toBeInTheDocument()
-    expect(screen.getByText('Resolved platform')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /copy report/i })).toBeInTheDocument()
-    expect(screen.getByLabelText('Plain text report').textContent).toContain('Resolved platform: lg-tv (query)')
-    expect(screen.getByLabelText('Plain text report').textContent).toContain('Analytics appName: marea-lg-tv')
+    expect(await screen.findByRole('heading', { name: 'Diagnóstico' })).toBeInTheDocument()
+    expect(screen.getByText('Plataforma resuelta')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /copiar informe/i })).toBeInTheDocument()
+    expect(screen.getByLabelText('Informe en texto plano').textContent).toContain('Plataforma resuelta: lg-tv (query)')
+    expect(screen.getByLabelText('Informe en texto plano').textContent).toContain('appName de analítica: marea-lg-tv')
   })
 
   it('unknown routes redirect home', async () => {
@@ -97,14 +97,14 @@ describe('App routes', () => {
   it('the footer links to /debug and /install', async () => {
     renderApp('/')
     await screen.findByRole('heading', { name: 'Marea TV' })
-    expect(screen.getByRole('link', { name: 'Debug' })).toHaveAttribute('href', '/debug')
-    expect(screen.getByRole('link', { name: 'Install' })).toHaveAttribute('href', '/install')
+    expect(screen.getByRole('link', { name: 'Diagnóstico' })).toHaveAttribute('href', '/debug')
+    expect(screen.getByRole('link', { name: 'Instalar' })).toHaveAttribute('href', '/install')
   })
 
   it('/install lazy-loads the install page with its QR code', async () => {
     renderApp('/install')
-    expect(await screen.findByRole('heading', { level: 1, name: /install marea/i })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: /qr code/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { level: 1, name: /instala marea/i })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /código qr/i })).toBeInTheDocument()
   })
 })
 
@@ -113,18 +113,18 @@ describe('Debug copy report', () => {
     const writeText = jest.fn(() => Promise.resolve())
     Object.assign(navigator, { clipboard: { writeText } })
     renderApp('/debug')
-    fireEvent.click(await screen.findByRole('button', { name: /copy report/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /copiar informe/i }))
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1))
-    expect(writeText.mock.calls[0][0]).toContain('Resolved platform: lg-tv')
-    expect(await screen.findByText(/report copied/i)).toBeInTheDocument()
+    expect(writeText.mock.calls[0][0]).toContain('Plataforma resuelta: lg-tv')
+    expect(await screen.findByText(/informe copiado/i)).toBeInTheDocument()
   })
 
   it('selects the text when the clipboard is unavailable', async () => {
     Object.assign(navigator, { clipboard: { writeText: () => Promise.reject(new Error('denied')) } })
     document.execCommand = jest.fn(() => false)
     renderApp('/debug')
-    fireEvent.click(await screen.findByRole('button', { name: /copy report/i }))
-    expect(await screen.findByText(/clipboard unavailable/i)).toBeInTheDocument()
-    expect(window.getSelection().toString()).toContain('Resolved platform')
+    fireEvent.click(await screen.findByRole('button', { name: /copiar informe/i }))
+    expect(await screen.findByText(/portapapeles no disponible/i)).toBeInTheDocument()
+    expect(window.getSelection().toString()).toContain('Plataforma resuelta')
   })
 })

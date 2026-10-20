@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link, useRouteMatch } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { useAppContext } from 'components/context/AppContext/AppContext'
 import { useAudioPlayer } from 'components/context/PlayerContext/AudioPlayerProvider'
@@ -8,6 +8,8 @@ import LiveBadge from 'components/common/LiveBadge/LiveBadge'
 import Equalizer from 'components/content/Equalizer/Equalizer'
 import { Button } from 'components/common/Button/Button.styles'
 import { PlayIcon, PauseIcon, SpinnerIcon } from 'components/common/Icons/Icons'
+import { translate } from 'core/Translation'
+import useMiniPlayerVisible from './hooks/useMiniPlayerVisible'
 
 const Bar = styled.aside`
   position: fixed;
@@ -53,9 +55,9 @@ const Row = styled.span`
 export default function MiniPlayer () {
   const { config } = useAppContext()
   const { status, isPlaying, toggle } = useAudioPlayer()
-  const onRadioPage = useRouteMatch('/radio')
+  const visible = useMiniPlayerVisible()
 
-  if (status === 'idle' || onRadioPage) {
+  if (!visible) {
     return null
   }
 
@@ -63,16 +65,16 @@ export default function MiniPlayer () {
   const loading = status === 'loading'
 
   return (
-    <Bar aria-label={`${title} mini player`}>
+    <Bar aria-label={translate('player.miniLabel', { title })}>
       <Inner>
         <Equalizer active={isPlaying} size={24} />
         <Info to='/radio'>
           <strong>{title}</strong>
           <Row><LiveBadge /></Row>
         </Info>
-        <Button type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? `Pause ${title}` : `Play ${title}`}>
+        <Button type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? translate('player.pauseNamed', { title }) : translate('player.playNamed', { title })}>
           {loading ? <SpinnerIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
-          {isPlaying ? 'Pause' : 'Play'}
+          {isPlaying ? translate('player.pause') : translate('player.play')}
         </Button>
       </Inner>
     </Bar>

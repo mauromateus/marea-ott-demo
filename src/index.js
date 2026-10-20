@@ -7,6 +7,7 @@ import ConfigService from 'core/services/Config/ConfigService'
 import ServiceWorkerService from 'core/services/ServiceWorkerService'
 import { initPlatformOrigin } from 'core/Utils/getPlatformOrigin'
 import getBasename from 'core/Utils/getBasename'
+import { initLanguage, translate } from 'core/Translation'
 import InstallPromptService from 'core/services/InstallPromptService'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
@@ -17,6 +18,8 @@ async function boot () {
   InstallPromptService.init()
   try {
     const config = await ConfigService.getJson()
+    // Sets the dictionary and <html lang> before the first render.
+    initLanguage(config)
     // Once, before the first render, so every analytics event and the player see the same platform.
     const platformDetails = initPlatformOrigin({ useReferrerSignal: config.analytics.referrerSignal !== false })
 
@@ -27,7 +30,7 @@ async function boot () {
       root
     )
   } catch (error) {
-    root.textContent = 'Marea could not start. Check your connection and reload.'
+    root.textContent = translate('errors.boot', { name: 'Marea' })
     console.error(error)
   }
 }

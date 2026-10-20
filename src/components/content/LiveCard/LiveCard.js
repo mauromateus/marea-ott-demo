@@ -8,6 +8,7 @@ import { Button, ButtonLink } from 'components/common/Button/Button.styles'
 import { PlayIcon, PauseIcon, SpinnerIcon } from 'components/common/Icons/Icons'
 import Equalizer from 'components/content/Equalizer/Equalizer'
 import { useAudioPlayer } from 'components/context/PlayerContext/AudioPlayerProvider'
+import { translate } from 'core/Translation'
 
 const drift = keyframes`
   from { transform: translateX(0); }
@@ -115,15 +116,15 @@ export default function LiveCard ({ kind, title, description, to, large = false 
         <Actions>
           {isAudio
             ? (
-              <Button type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? `Pause ${title}` : `Listen to ${title} live`}>
+              <Button type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? translate('player.pauseNamed', { title }) : translate('home.card.listenNamed', { title })}>
                 {loading ? <SpinnerIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
-                {loading ? 'Connecting' : isPlaying ? 'Pause' : 'Listen live'}
+                {loading ? translate('player.connecting') : isPlaying ? translate('player.pause') : translate('home.card.listen')}
               </Button>
               )
             : (
-              <ButtonLink to={to}><PlayIcon /> Watch live</ButtonLink>
+              <ButtonLink to={to}><PlayIcon /> {translate('home.card.watch')}</ButtonLink>
               )}
-          {isAudio && <ButtonLink to={to} $variant='secondary'>Open radio</ButtonLink>}
+          {isAudio && <ButtonLink to={to} $variant='secondary'>{translate('home.card.openRadio')}</ButtonLink>}
         </Actions>
       </Body>
     </Card>

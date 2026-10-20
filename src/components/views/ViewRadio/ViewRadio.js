@@ -9,6 +9,7 @@ import { Button } from 'components/common/Button/Button.styles'
 import { PlayIcon, PauseIcon, SpinnerIcon } from 'components/common/Icons/Icons'
 import Equalizer from 'components/content/Equalizer/Equalizer'
 import { WaveDecoration } from 'components/content/LiveCard/LiveCard'
+import { translate } from 'core/Translation'
 
 const Panel = styled.section`
   position: relative;
@@ -36,12 +37,13 @@ const BigButton = styled(Button)`
   font-size: 1.1rem;
 `
 
-const STATUS_TEXT = {
-  idle: 'Press play to tune in.',
-  loading: 'Connecting to the live signal...',
-  playing: 'You are listening live.',
-  paused: 'Paused. Press play to rejoin the live signal.',
-  error: 'The stream could not start. Press play to try again.'
+// Literal keys on purpose: the dictionary test scans source for them.
+const STATUS_KEYS = {
+  idle: 'radio.status.idle',
+  loading: 'radio.status.loading',
+  playing: 'radio.status.playing',
+  paused: 'radio.status.paused',
+  error: 'radio.status.error'
 }
 
 export default function ViewRadio () {
@@ -58,11 +60,11 @@ export default function ViewRadio () {
       <Equalizer active={isPlaying} size={44} />
       <h1 id='radio-title'>{title}</h1>
       <p>{description}</p>
-      <BigButton type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? `Pause ${title}` : `Play ${title}`}>
+      <BigButton type='button' onClick={toggle} disabled={loading} aria-label={isPlaying ? translate('player.pauseNamed', { title }) : translate('player.playNamed', { title })}>
         {loading ? <SpinnerIcon /> : isPlaying ? <PauseIcon /> : <PlayIcon />}
-        {loading ? 'Connecting' : isPlaying ? 'Pause' : 'Play'}
+        {loading ? translate('player.connecting') : isPlaying ? translate('player.pause') : translate('player.play')}
       </BigButton>
-      <p role='status'>{STATUS_TEXT[status]}</p>
+      <p role='status'>{translate(STATUS_KEYS[status])}</p>
     </Panel>
   )
 }

@@ -87,7 +87,9 @@ describe('trackPageView', () => {
       VIDEO_LIVE_WATCH: 'ms_event_video_live_watch',
       INSTALL_PROMPT_SHOWN: 'ms_event_install_prompt_shown',
       INSTALL_CHOICE: 'ms_event_install_choice',
-      APP_INSTALLED: 'ms_event_app_installed'
+      APP_INSTALLED: 'ms_event_app_installed',
+      INSTALL_SHEET_SHOWN: 'ms_event_install_sheet_shown',
+      INSTALL_SHEET_DISMISSED: 'ms_event_install_sheet_dismissed'
     })
   })
 })

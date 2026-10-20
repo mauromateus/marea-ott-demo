@@ -38,7 +38,7 @@ Audio: the real audio path (`NextPlayer/utils/playAudioContent.js`) does not sen
 
 ## 4. App download banner
 
-`src/components/v2/content/AppDownloadBanner/AppDownloadBanner.js` renders the banner when `useAppBanner()` says `isModalVisible`. Inside an installed PWA or a native shell, the banner makes no sense. In `hooks/useAppBanner`, return not visible when `getPlatformOrigin() !== 'web'`. The demo's install button and iOS banner avoid the same shell problem the same way (`canShowInstallUi(platform)` in `src/core/Utils/detectInstallContext.js`, ADR 0005): they render only when the resolved platform is `web`.
+`src/components/v2/content/AppDownloadBanner/AppDownloadBanner.js` renders the banner when `useAppBanner()` says `isModalVisible`. Inside an installed PWA or a native shell, the banner makes no sense. In `hooks/useAppBanner`, return not visible when `getPlatformOrigin() !== 'web'`. The demo's install button, install sheet and iOS instructions avoid the same shell problem the same way (`canShowInstallUi(platform)` in `src/core/Utils/detectInstallContext.js`, ADR 0005 and 0006): they render only when the resolved platform is `web`.
 
 ## 5. Service worker, manifest, icons (needs the platform team)
 
@@ -66,3 +66,12 @@ What each piece needs from the platform team:
 ## What not to port
 
 `ConfigService` (the real one is the source of truth), `ThemeContext` (the real one exists), the Marea rails and artwork, and `LiveCard` / `MiniPlayer` (PoC UI).
+
+## 6. Translations
+
+Marea's `src/core/Translation.js` mirrors the real product's `translate(key, params)` convention on purpose: same name, `{name}` interpolation, and a missing key returns the key (with a `console.warn` in development). If the real `Translation.js` already does this, port only the dictionary layout and the test:
+
+- `src/i18n/<language>/` split by area (`common`, `home`, `tv`, `radio`, `install`, `debug`, `player`, `errors`), flat keys prefixed with the area.
+- `src/tests/i18n/dictionary.test.js` scans the source for referenced keys and fails when one is missing from the dictionary. It is the cheapest guard against a user seeing `install.sheet.title` on screen.
+- Marea reads `app.language` from the OTT config and sets `document.documentElement.lang` at boot; the real product should do the same per client.
+- The analytics `ms_page_title` values follow the UI language in Marea. Decide with analytics whether the real product keeps one language for reporting.

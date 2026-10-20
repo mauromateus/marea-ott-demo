@@ -10,9 +10,10 @@ import GTMProvider from 'components/context/GoogleTagManager/GoogleTagManager'
 import AudioPlayerProvider from 'components/context/PlayerContext/AudioPlayerProvider'
 import Header from 'components/common/Header/Header'
 import Footer from 'components/common/Footer/Footer'
-import InstallBanner from 'components/common/InstallBanner/InstallBanner'
+import InstallSheet from 'components/common/InstallSheet/InstallSheet'
 import UpdateToast from 'components/common/UpdateToast/UpdateToast'
 import MiniPlayer from 'components/content/MiniPlayer/MiniPlayer'
+import { translate } from 'core/Translation'
 
 const ViewHome = lazy(() => import('components/views/ViewHome'))
 const ViewTv = lazy(() => import('components/views/ViewTv'))
@@ -55,9 +56,8 @@ export default function App ({ config, platformDetails }) {
             <Helmet defaultTitle={config.brand.name} titleTemplate={`%s · ${config.brand.name}`} />
             <Shell>
               <Header brandName={config.brand.name} />
-              <InstallBanner />
               <Main>
-                <Suspense fallback={<Loading role='status'>Loading...</Loading>}>
+                <Suspense fallback={<Loading role='status'>{translate('common.loading')}</Loading>}>
                   <Switch>
                     <Route exact path='/' component={ViewHome} />
                     <Route path='/tv' component={ViewTv} />
@@ -70,6 +70,7 @@ export default function App ({ config, platformDetails }) {
               </Main>
               <Footer brandName={config.brand.name} version={config.app.version} />
             </Shell>
+            <InstallSheet />
             <MiniPlayer />
             <UpdateToast />
           </AudioPlayerProvider>

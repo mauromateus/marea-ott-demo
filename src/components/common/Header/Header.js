@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom'
 
 import Logo from 'components/common/Logo/Logo'
 import InstallButton from 'components/common/InstallButton/InstallButton'
+import { translate } from 'core/Translation'
 
 const Bar = styled.header`
   position: sticky;
@@ -25,12 +26,15 @@ const Inner = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px 16px;
+  gap: 0 16px;
 `
 
-// On narrow phones the button wraps to its own right-aligned row instead of squeezing the nav.
+// Phones: the button stays in the first row next to the logo and the nav drops to its own row,
+// instead of the button wrapping into a row of its own that is easy to miss.
 const Install = styled(InstallButton)`
-  @media (max-width: 599px) { order: 3; margin-left: auto; margin-bottom: 8px; }
+  flex: none;
+
+  @media (max-width: 599px) { order: 2; margin-left: auto; }
 `
 
 const Brand = styled(Link)`
@@ -42,6 +46,8 @@ const Nav = styled.nav`
   display: flex;
   gap: 4px;
   margin-left: auto;
+
+  @media (max-width: 599px) { order: 3; }
 `
 
 const NavItem = styled(NavLink)`
@@ -56,6 +62,8 @@ const NavItem = styled(NavLink)`
 
   &:hover { color: ${({ theme }) => theme.colors.text}; background: rgba(255, 255, 255, 0.06); }
   &.active { color: ${({ theme }) => theme.colors.accent}; background: rgba(46, 196, 182, 0.12); }
+
+  @media (max-width: 599px) { padding: 0 12px; }
 `
 
 Header.propTypes = {
@@ -66,11 +74,11 @@ export default function Header ({ brandName }) {
   return (
     <Bar>
       <Inner>
-        <Brand to='/' aria-label={`${brandName} home`}><Logo name={brandName} /></Brand>
-        <Nav aria-label='Main'>
-          <NavItem to='/' exact>Home</NavItem>
-          <NavItem to='/tv'>TV</NavItem>
-          <NavItem to='/radio'>Radio</NavItem>
+        <Brand to='/' aria-label={translate('common.brand.home', { name: brandName })}><Logo name={brandName} /></Brand>
+        <Nav aria-label={translate('common.nav.label')}>
+          <NavItem to='/' exact>{translate('common.nav.home')}</NavItem>
+          <NavItem to='/tv'>{translate('common.nav.tv')}</NavItem>
+          <NavItem to='/radio'>{translate('common.nav.radio')}</NavItem>
         </Nav>
         <Install compact />
       </Inner>

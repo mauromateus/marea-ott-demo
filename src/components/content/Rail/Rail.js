@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import SwiperCore, { Keyboard, A11y } from 'swiper'
@@ -6,8 +6,19 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper.min.css'
 
 import Artwork from 'components/common/Artwork/Artwork'
+import { translate } from 'core/Translation'
 
 SwiperCore.use([Keyboard, A11y])
+
+// Swiper's own screen reader messages default to English.
+const getA11y = () => ({
+  enabled: true,
+  prevSlideMessage: translate('home.rail.a11y.prev'),
+  nextSlideMessage: translate('home.rail.a11y.next'),
+  firstSlideMessage: translate('home.rail.a11y.first'),
+  lastSlideMessage: translate('home.rail.a11y.last'),
+  slideLabelMessage: translate('home.rail.a11y.slide')
+})
 
 const Section = styled.section`
   display: flex;
@@ -74,6 +85,7 @@ Rail.propTypes = {
 export default function Rail ({ rail }) {
   const [swiper, setSwiper] = useState(null)
   const [notice, setNotice] = useState('')
+  const a11y = useMemo(getA11y, [])
 
   const handleFocus = (index) => {
     // Keep the focused card in view; the browser would otherwise scroll the overflow-hidden container.
@@ -94,14 +106,14 @@ export default function Rail ({ rail }) {
           spaceBetween={14}
           freeMode
           keyboard={{ enabled: true }}
-          a11y={{ enabled: true }}
+          a11y={a11y}
         >
           {rail.items.map((item, index) => (
             <SwiperSlide key={item.id}>
               <CardButton
                 type='button'
                 onFocus={() => handleFocus(index)}
-                onClick={() => setNotice(`${item.title} is example content and cannot be played in this demo.`)}
+                onClick={() => setNotice(translate('home.rail.exampleNotice', { title: item.title }))}
               >
                 <Poster>
                   <Artwork from={item.artwork.from} to={item.artwork.to} angle={item.artwork.angle} glyph={item.artwork.glyph} />

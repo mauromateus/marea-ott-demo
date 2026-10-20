@@ -1,6 +1,8 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
+import { translate } from 'core/Translation'
+
 const pulse = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
   70% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); }
@@ -34,7 +36,7 @@ export default function LiveBadge () {
   return (
     <Badge>
       <Dot aria-hidden='true' />
-      LIVE
+      {translate('common.live')}
     </Badge>
   )
 }

@@ -1,0 +1,27 @@
+// Technical identifiers (dataLayer, userAgent, display-mode, appName, document.referrer) stay in English.
+export default {
+  'debug.pageTitle': 'Diagnóstico',
+  'debug.title': 'Diagnóstico',
+  'debug.lead': 'Esto es lo que este dispositivo reporta a analítica. Abre esta página en cada entorno (navegador, app instalada, app Android, TV) y pega el informe en docs/test-log.md.',
+  'debug.copy': 'Copiar informe',
+  'debug.reportLabel': 'Informe en texto plano',
+  'debug.none': '(ninguno)',
+  'debug.empty': '(vacío)',
+  'debug.yes': 'sí',
+  'debug.no': 'no',
+  'debug.unsupported': 'no compatible',
+  'debug.label.platform': 'Plataforma resuelta',
+  'debug.label.appName': 'appName de analítica',
+  'debug.label.displayMode': 'Modo de pantalla (display-mode)',
+  'debug.label.referrer': 'document.referrer',
+  'debug.label.launchQuery': 'Parámetros de inicio',
+  'debug.label.sessionPlatform': 'Plataforma guardada en la sesión',
+  'debug.label.serviceWorker': 'El service worker controla la página',
+  'debug.label.online': 'En línea',
+  'debug.label.userAgent': 'userAgent',
+  'debug.label.appVersion': 'Versión de la app',
+  'debug.label.url': 'URL',
+  'debug.label.viewport': 'Tamaño de la ventana',
+  'debug.report.title': 'Informe de diagnóstico de {name} ({date})',
+  'debug.report.events': 'Eventos de dataLayer (últimos {count}), del más reciente al más antiguo:'
+}

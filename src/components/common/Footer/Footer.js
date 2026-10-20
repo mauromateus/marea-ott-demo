@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
+import { translate } from 'core/Translation'
+
 const Bar = styled.footer`
   border-top: 1px solid ${({ theme }) => theme.colors.border};
   color: ${({ theme }) => theme.colors.textMuted};
@@ -46,10 +48,10 @@ export default function Footer ({ brandName, version }) {
   return (
     <Bar>
       <Inner>
-        <span>{brandName} demo{version ? ` · v${version}` : ''}</span>
-        <Links aria-label='Footer'>
-          <FooterLink to='/install'>Install</FooterLink>
-          <FooterLink to='/debug'>Debug</FooterLink>
+        <span>{translate('common.footer.demo', { name: brandName })}{version ? ` · v${version}` : ''}</span>
+        <Links aria-label={translate('common.footer.label')}>
+          <FooterLink to='/install'>{translate('common.footer.install')}</FooterLink>
+          <FooterLink to='/debug'>{translate('common.footer.debug')}</FooterLink>
         </Links>
       </Inner>
     </Bar>

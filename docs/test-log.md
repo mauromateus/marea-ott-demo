@@ -21,16 +21,20 @@ Status values: `pending`, `ok`, `fail`, `n/a`.
 
 ## Install experience checks
 
-Steps for each row are in `docs/decisions/0005-install-experience.md` ("How to test"). `beforeinstallprompt` cannot be simulated, so every row needs a real device or browser on the HTTPS deployment. After each check, open `/debug` and note the install events.
+Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/decisions/0006-install-sheet-and-spanish-ui.md` ("How to test"). `beforeinstallprompt` cannot be simulated, so every row needs a real device or browser on the HTTPS deployment. After each check, open `/debug` and note the install events.
 
 | Check | Device / browser | Status | Notes |
 |---|---|---|---|
-| Android Chrome: "Install app" button | pending | pending | Header button shows, prompt opens, accepting hides it; `/debug` lists `install_prompt_shown`, `install_choice`, `app_installed` |
+| Android Chrome: "Instalar app" header button | pending | pending | Header button is visible in the first row at 360px, prompt opens, accepting hides it; `/debug` lists `install_prompt_shown`, `install_choice`, `app_installed` |
+| Android Chrome: install sheet | pending | pending | Sheet slides up after 4 s or the first scroll; "Instalar" opens the prompt; "Ahora no" hides it for 7 days; `/debug` lists `install_sheet_shown` and `install_sheet_dismissed` |
 | Android Chrome: menu "Install app" | pending | pending | Header button hides after install; `/debug` lists `app_installed` |
-| iPhone Safari: add-to-home-screen banner | pending | pending | Banner shows, Dismiss sticks after reload, no banner once launched from the Home Screen |
+| iPhone Safari: install sheet with steps and arrow | pending | pending | Sheet shows after 4 s or the first scroll, two steps, bouncing arrow; "Ahora no" sticks after reload; no sheet once launched from the Home Screen; no arrow on iPad |
 | Desktop Chrome: install button | pending | pending | Header button and address-bar icon; accepted install opens an app window |
 | `/install` QR scan from another device | pending | pending | Opens the site at `/marea-ott-demo/`, not at the origin root |
-| Installed PWA hides the button | pending | pending | No Install button, no iOS banner, `/install` says "Already installed", `/debug` shows `pwa-web` |
+| Installed PWA hides the install UI | pending | pending | No install button, no sheet, `/install` says "Ya está instalada", `/debug` shows `pwa-web` |
+| Install sheet sits above the mini player | pending | pending | Start the radio, go to Inicio: the sheet is above the mini player and nothing overlaps, also with the iPhone home indicator |
+| `/install` on a phone is not saturated | pending | pending | No QR, one title, one line, the big button or one accordion item with at most 3 short steps |
+| Whole UI in Spanish | pending | pending | Walk Inicio, TV, Radio, Instalar, Diagnóstico, the update toast and the error states: no English visible (the player's own controls excepted) |
 
 ## Expected results
 

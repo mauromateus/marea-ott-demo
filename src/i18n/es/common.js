@@ -1,0 +1,21 @@
+export default {
+  'common.live': 'EN VIVO',
+  'common.loading': 'Cargando...',
+  'common.installApp': 'Instalar app',
+  'common.exampleNote': 'Contenido de ejemplo: los títulos y las imágenes son inventados para esta demostración.',
+  'common.nav.label': 'Principal',
+  'common.nav.home': 'Inicio',
+  'common.nav.tv': 'TV',
+  'common.nav.radio': 'Radio',
+  'common.brand.home': 'Ir al inicio de {name}',
+  'common.footer.label': 'Pie de página',
+  'common.footer.demo': 'Demostración de {name}',
+  'common.footer.install': 'Instalar',
+  'common.footer.debug': 'Diagnóstico',
+  'common.update.available': 'Hay una nueva versión disponible',
+  'common.update.action': 'Actualizar',
+  'common.copy.link.done': 'Enlace copiado al portapapeles.',
+  'common.copy.link.failed': 'Portapapeles no disponible: el enlace quedó seleccionado, cópialo a mano.',
+  'common.copy.report.done': 'Informe copiado al portapapeles.',
+  'common.copy.report.failed': 'Portapapeles no disponible: el informe quedó seleccionado, cópialo a mano.'
+}

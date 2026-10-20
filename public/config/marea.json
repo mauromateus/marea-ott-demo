@@ -1,7 +1,7 @@
 {
   "brand": {
     "name": "Marea",
-    "tagline": "Live TV and radio, straight from the coast.",
+    "tagline": "TV y radio en vivo, directo desde la costa.",
     "colors": {
       "background": "#0B1220",
       "surface": "#121B2E",
@@ -16,6 +16,7 @@
   "app": {
     "ottName": "Marea",
     "version": "0.1.0",
+    "language": "es",
     "gtmId": ""
   },
   "install": {
@@ -40,25 +41,25 @@
       "type": "live",
       "id": "6a7a2c26686671c2378f0ef5",
       "title": "Marea TV",
-      "description": "Live from the coast, around the clock."
+      "description": "En vivo desde la costa, las 24 horas."
     },
     "audio": {
       "type": "live",
       "id": "66a851c67891bc6f032fd771",
       "title": "Marea Radio",
-      "description": "Music and voices of the sea, live."
+      "description": "Música y voces del mar, en vivo."
     }
   },
   "rails": [
     {
       "id": "new",
-      "title": "New on Marea",
+      "title": "Novedades en Marea",
       "sample": true,
       "items": [
         {
           "id": "new-1",
-          "title": "Salt Line",
-          "meta": "Documentary · 48 min",
+          "title": "Línea de sal",
+          "meta": "Documental · 48 min",
           "sample": true,
           "artwork": {
             "from": "#134E5E",
@@ -69,7 +70,7 @@
         },
         {
           "id": "new-2",
-          "title": "The Last Ferry",
+          "title": "El último ferri",
           "meta": "Drama · 1 h 32 min",
           "sample": true,
           "artwork": {
@@ -81,8 +82,8 @@
         },
         {
           "id": "new-3",
-          "title": "Kelp & Smoke",
-          "meta": "Food · 26 min",
+          "title": "Algas y humo",
+          "meta": "Gastronomía · 26 min",
           "sample": true,
           "artwork": {
             "from": "#3A1C71",
@@ -93,8 +94,8 @@
         },
         {
           "id": "new-4",
-          "title": "Harbor Lights",
-          "meta": "Series · 8 episodes",
+          "title": "Luces del puerto",
+          "meta": "Serie · 8 episodios",
           "sample": true,
           "artwork": {
             "from": "#0F4C5C",
@@ -105,8 +106,8 @@
         },
         {
           "id": "new-5",
-          "title": "Low Tide Diaries",
-          "meta": "Documentary · 52 min",
+          "title": "Diarios de la marea baja",
+          "meta": "Documental · 52 min",
           "sample": true,
           "artwork": {
             "from": "#14213D",
@@ -117,8 +118,8 @@
         },
         {
           "id": "new-6",
-          "title": "Paper Boats",
-          "meta": "Family · 1 h 18 min",
+          "title": "Barquitos de papel",
+          "meta": "Familiar · 1 h 18 min",
           "sample": true,
           "artwork": {
             "from": "#5F0F40",
@@ -129,8 +130,8 @@
         },
         {
           "id": "new-7",
-          "title": "Northern Swell",
-          "meta": "Sports · 44 min",
+          "title": "Oleaje del norte",
+          "meta": "Deportes · 44 min",
           "sample": true,
           "artwork": {
             "from": "#0B3954",
@@ -141,8 +142,8 @@
         },
         {
           "id": "new-8",
-          "title": "Glass Water",
-          "meta": "Thriller · 1 h 41 min",
+          "title": "Agua de cristal",
+          "meta": "Suspenso · 1 h 41 min",
           "sample": true,
           "artwork": {
             "from": "#1D3557",
@@ -155,13 +156,13 @@
     },
     {
       "id": "coastal",
-      "title": "Coastal Stories",
+      "title": "Historias de la costa",
       "sample": true,
       "items": [
         {
           "id": "coastal-1",
-          "title": "Dune Keepers",
-          "meta": "Documentary · 39 min",
+          "title": "Guardianes de las dunas",
+          "meta": "Documental · 39 min",
           "sample": true,
           "artwork": {
             "from": "#0F4C5C",
@@ -172,8 +173,8 @@
         },
         {
           "id": "coastal-2",
-          "title": "Lighthouse Row",
-          "meta": "Series · 10 episodes",
+          "title": "Calle del Faro",
+          "meta": "Serie · 10 episodios",
           "sample": true,
           "artwork": {
             "from": "#14213D",
@@ -184,8 +185,8 @@
         },
         {
           "id": "coastal-3",
-          "title": "Saltwater Kitchen",
-          "meta": "Food · 24 min",
+          "title": "Cocina de agua salada",
+          "meta": "Gastronomía · 24 min",
           "sample": true,
           "artwork": {
             "from": "#5F0F40",
@@ -196,7 +197,7 @@
         },
         {
           "id": "coastal-4",
-          "title": "The Drift Season",
+          "title": "La temporada a la deriva",
           "meta": "Drama · 1 h 27 min",
           "sample": true,
           "artwork": {
@@ -208,8 +209,8 @@
         },
         {
           "id": "coastal-5",
-          "title": "Cape of Echoes",
-          "meta": "Mystery · 1 h 36 min",
+          "title": "Cabo de los Ecos",
+          "meta": "Misterio · 1 h 36 min",
           "sample": true,
           "artwork": {
             "from": "#1D3557",
@@ -220,8 +221,8 @@
         },
         {
           "id": "coastal-6",
-          "title": "Tide Pool Club",
-          "meta": "Kids · 12 min",
+          "title": "Club de las pozas",
+          "meta": "Infantil · 12 min",
           "sample": true,
           "artwork": {
             "from": "#134E5E",
@@ -232,8 +233,8 @@
         },
         {
           "id": "coastal-7",
-          "title": "Fog Signals",
-          "meta": "Documentary · 57 min",
+          "title": "Señales en la niebla",
+          "meta": "Documental · 57 min",
           "sample": true,
           "artwork": {
             "from": "#1B2A49",
@@ -244,8 +245,8 @@
         },
         {
           "id": "coastal-8",
-          "title": "Shell Road",
-          "meta": "Travel · 31 min",
+          "title": "Camino de conchas",
+          "meta": "Viajes · 31 min",
           "sample": true,
           "artwork": {
             "from": "#3A1C71",
@@ -258,13 +259,13 @@
     },
     {
       "id": "sound",
-      "title": "Sounds of the Sea",
+      "title": "Sonidos del mar",
       "sample": true,
       "items": [
         {
           "id": "sound-1",
-          "title": "Midnight Marea Mix",
-          "meta": "Music · 1 h 02 min",
+          "title": "Mezcla Marea de medianoche",
+          "meta": "Música · 1 h 02 min",
           "sample": true,
           "artwork": {
             "from": "#0B3954",
@@ -275,8 +276,8 @@
         },
         {
           "id": "sound-2",
-          "title": "Slow Waves Vol. 2",
-          "meta": "Ambient · 48 min",
+          "title": "Olas lentas, vol. 2",
+          "meta": "Ambiental · 48 min",
           "sample": true,
           "artwork": {
             "from": "#1D3557",
@@ -287,8 +288,8 @@
         },
         {
           "id": "sound-3",
-          "title": "Harbor Sessions",
-          "meta": "Live music · 55 min",
+          "title": "Sesiones del puerto",
+          "meta": "Música en vivo · 55 min",
           "sample": true,
           "artwork": {
             "from": "#134E5E",
@@ -299,8 +300,8 @@
         },
         {
           "id": "sound-4",
-          "title": "Deep Blue Hours",
-          "meta": "Ambient · 1 h 10 min",
+          "title": "Horas de azul profundo",
+          "meta": "Ambiental · 1 h 10 min",
           "sample": true,
           "artwork": {
             "from": "#1B2A49",
@@ -311,8 +312,8 @@
         },
         {
           "id": "sound-5",
-          "title": "Coral Static",
-          "meta": "Electronic · 41 min",
+          "title": "Estática de coral",
+          "meta": "Electrónica · 41 min",
           "sample": true,
           "artwork": {
             "from": "#3A1C71",
@@ -323,7 +324,7 @@
         },
         {
           "id": "sound-6",
-          "title": "Sunset Cassette",
+          "title": "Casete del atardecer",
           "meta": "Pop · 37 min",
           "sample": true,
           "artwork": {
@@ -335,8 +336,8 @@
         },
         {
           "id": "sound-7",
-          "title": "Echo Bay Live",
-          "meta": "Live music · 1 h 05 min",
+          "title": "Bahía del Eco en vivo",
+          "meta": "Música en vivo · 1 h 05 min",
           "sample": true,
           "artwork": {
             "from": "#14213D",
@@ -347,8 +348,8 @@
         },
         {
           "id": "sound-8",
-          "title": "Moonlit Shore",
-          "meta": "Acoustic · 34 min",
+          "title": "Orilla a la luz de la luna",
+          "meta": "Acústica · 34 min",
           "sample": true,
           "artwork": {
             "from": "#5F0F40",
@@ -361,13 +362,13 @@
     },
     {
       "id": "late",
-      "title": "Late Tide",
+      "title": "Marea nocturna",
       "sample": true,
       "items": [
         {
           "id": "late-1",
-          "title": "After the Storm",
-          "meta": "Thriller · 1 h 29 min",
+          "title": "Después de la tormenta",
+          "meta": "Suspenso · 1 h 29 min",
           "sample": true,
           "artwork": {
             "from": "#1B2A49",
@@ -378,8 +379,8 @@
         },
         {
           "id": "late-2",
-          "title": "Night Fishers",
-          "meta": "Documentary · 46 min",
+          "title": "Pescadores de noche",
+          "meta": "Documental · 46 min",
           "sample": true,
           "artwork": {
             "from": "#3A1C71",
@@ -390,8 +391,8 @@
         },
         {
           "id": "late-3",
-          "title": "Phosphor",
-          "meta": "Sci-fi · 1 h 38 min",
+          "title": "Fósforo",
+          "meta": "Ciencia ficción · 1 h 38 min",
           "sample": true,
           "artwork": {
             "from": "#0F4C5C",
@@ -402,7 +403,7 @@
         },
         {
           "id": "late-4",
-          "title": "Wake",
+          "title": "Estela",
           "meta": "Drama · 1 h 22 min",
           "sample": true,
           "artwork": {
@@ -414,8 +415,8 @@
         },
         {
           "id": "late-5",
-          "title": "Undertow",
-          "meta": "Series · 6 episodes",
+          "title": "Resaca",
+          "meta": "Serie · 6 episodios",
           "sample": true,
           "artwork": {
             "from": "#5F0F40",
@@ -426,8 +427,8 @@
         },
         {
           "id": "late-6",
-          "title": "Blue Hour Heist",
-          "meta": "Crime · 1 h 44 min",
+          "title": "Robo en la hora azul",
+          "meta": "Crimen · 1 h 44 min",
           "sample": true,
           "artwork": {
             "from": "#0B3954",
@@ -438,8 +439,8 @@
         },
         {
           "id": "late-7",
-          "title": "Silent Anchor",
-          "meta": "Mystery · 1 h 19 min",
+          "title": "Ancla silenciosa",
+          "meta": "Misterio · 1 h 19 min",
           "sample": true,
           "artwork": {
             "from": "#1D3557",
@@ -450,8 +451,8 @@
         },
         {
           "id": "late-8",
-          "title": "The Long Swim",
-          "meta": "Sports · 58 min",
+          "title": "La larga travesía a nado",
+          "meta": "Deportes · 58 min",
           "sample": true,
           "artwork": {
             "from": "#134E5E",

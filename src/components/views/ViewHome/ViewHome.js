@@ -6,6 +6,7 @@ import { useAppContext } from 'components/context/AppContext/AppContext'
 import LiveCard from 'components/content/LiveCard/LiveCard'
 import Rail from 'components/content/Rail/Rail'
 import ExampleNote from 'components/common/ExampleNote/ExampleNote'
+import { translate } from 'core/Translation'
 
 const Page = styled.div`
   display: flex;
@@ -45,13 +46,13 @@ export default function ViewHome () {
 
   return (
     <Page>
-      <Helmet><title>Home</title></Helmet>
+      <Helmet><title>{translate('home.pageTitle')}</title></Helmet>
       <Intro>
         <h1>{brand.name}</h1>
         <p>{brand.tagline}</p>
       </Intro>
 
-      <Live aria-label='Live now'>
+      <Live role='region' aria-label={translate('home.liveNow')}>
         <LiveCard kind='video' large title={players.video.title} description={players.video.description} to='/tv' />
         <LiveCard kind='audio' large title={players.audio.title} description={players.audio.description} to='/radio' />
       </Live>

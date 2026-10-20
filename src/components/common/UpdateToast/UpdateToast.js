@@ -3,11 +3,13 @@ import styled from 'styled-components'
 
 import ServiceWorkerService from 'core/services/ServiceWorkerService'
 import { Button } from 'components/common/Button/Button.styles'
+import { MINI_PLAYER_CLEARANCE } from 'components/content/MiniPlayer/config/constants'
+import { translate } from 'core/Translation'
 
 const Toast = styled.div`
   position: fixed;
   left: 50%;
-  bottom: calc(88px + env(safe-area-inset-bottom));
+  bottom: calc(${MINI_PLAYER_CLEARANCE} + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: 40;
   width: min(92vw, 460px);
@@ -33,8 +35,8 @@ export default function UpdateToast () {
 
   return (
     <Toast role='status'>
-      <span>New version available</span>
-      <Button type='button' onClick={() => ServiceWorkerService.applyUpdate()}>Refresh</Button>
+      <span>{translate('common.update.available')}</span>
+      <Button type='button' onClick={() => ServiceWorkerService.applyUpdate()}>{translate('common.update.action')}</Button>
     </Toast>
   )
 }

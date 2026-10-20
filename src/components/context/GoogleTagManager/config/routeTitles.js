@@ -1,13 +1,15 @@
+import { translate } from 'core/Translation'
+
 // Static titles keep page_view deterministic (document.title is set asynchronously by react-helmet).
-const ROUTE_TITLES = {
-  '/': 'Home',
-  '/tv': 'Marea TV',
-  '/radio': 'Marea Radio',
-  '/debug': 'Debug',
-  '/install': 'Install',
-  '/install': 'Install'
+// Literal keys on purpose: the dictionary test scans source for them. Titles are Spanish; event names and keys stay English.
+const ROUTE_TITLE_KEYS = {
+  '/': 'home.pageTitle',
+  '/tv': 'tv.pageTitle',
+  '/radio': 'radio.pageTitle',
+  '/debug': 'debug.pageTitle',
+  '/install': 'install.pageTitle'
 }
 
-export const getRouteTitle = (pathname) => ROUTE_TITLES[pathname] || 'not-set'
+export const getRouteTitle = (pathname) => (ROUTE_TITLE_KEYS[pathname] ? translate(ROUTE_TITLE_KEYS[pathname]) : 'not-set')
 
-export default ROUTE_TITLES
+export default ROUTE_TITLE_KEYS

@@ -3,9 +3,12 @@ import styled from 'styled-components'
 import { Helmet } from 'react-helmet'
 
 import { Button } from 'components/common/Button/Button.styles'
+import { useAppContext } from 'components/context/AppContext/AppContext'
+import { translate } from 'core/Translation'
 import useDiagnostics from './hooks/useDiagnostics'
 import useCopyReport from './hooks/useCopyReport'
 import formatReport from './utils/formatReport'
+import { orEmpty, orNone, serviceWorkerLabel, yesNo } from './utils/labels'
 
 const Page = styled.div`
   display: flex;
@@ -84,30 +87,28 @@ const Report = styled.pre`
 `
 
 export default function ViewDebug () {
+  const { config } = useAppContext()
   const { diagnostics: d, events } = useDiagnostics()
-  const report = formatReport(d, events)
+  const report = formatReport(d, events, config.brand.name)
   const { reportRef, copy, message } = useCopyReport(report)
 
   const rows = [
-    ['Resolved platform', <><strong>{d.platform}</strong> ({d.platformSource})</>],
-    ['Analytics appName', <strong>{d.analyticsAppName || '(none)'}</strong>],
-    ['Display mode', d.displayMode],
-    ['document.referrer', d.referrer || '(empty)'],
-    ['Launch query', d.launchQuery || '(none)'],
-    ['Stored session platform', d.sessionPlatform || '(none)'],
-    ['Service worker controls page', d.serviceWorkerControlling],
-    ['Online', d.online ? 'yes' : 'no'],
-    ['User agent', d.userAgent]
+    [translate('debug.label.platform'), <><strong>{d.platform}</strong> ({d.platformSource})</>],
+    [translate('debug.label.appName'), <strong>{orNone(d.analyticsAppName)}</strong>],
+    [translate('debug.label.displayMode'), d.displayMode],
+    [translate('debug.label.referrer'), orEmpty(d.referrer)],
+    [translate('debug.label.launchQuery'), orNone(d.launchQuery)],
+    [translate('debug.label.sessionPlatform'), orNone(d.sessionPlatform)],
+    [translate('debug.label.serviceWorker'), serviceWorkerLabel(d.serviceWorkerControlling)],
+    [translate('debug.label.online'), yesNo(d.online)],
+    [translate('debug.label.userAgent'), d.userAgent]
   ]
 
   return (
     <Page>
-      <Helmet><title>Debug</title></Helmet>
-      <h1>Debug</h1>
-      <Lead>
-        What this device reports to analytics. Open this page inside each shell (browser, installed app, Android app, TV)
-        and paste the report into docs/test-log.md.
-      </Lead>
+      <Helmet><title>{translate('debug.pageTitle')}</title></Helmet>
+      <h1>{translate('debug.title')}</h1>
+      <Lead>{translate('debug.lead')}</Lead>
 
       <Grid>
         {rows.map(([label, value]) => (
@@ -119,11 +120,11 @@ export default function ViewDebug () {
       </Grid>
 
       <Actions>
-        <Button type='button' onClick={copy}>Copy report</Button>
+        <Button type='button' onClick={copy}>{translate('debug.copy')}</Button>
         <span role='status'>{message}</span>
       </Actions>
 
-      <Report ref={reportRef} tabIndex={0} aria-label='Plain text report'>{report}</Report>
+      <Report ref={reportRef} tabIndex={0} aria-label={translate('debug.reportLabel')}>{report}</Report>
     </Page>
   )
 }

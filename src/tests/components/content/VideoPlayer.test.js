@@ -72,10 +72,10 @@ describe('VideoPlayer', () => {
     const { store } = await mount()
     act(() => loadedConfig.events.onPlay())
     act(() => evictedCb())
-    expect(screen.getByText(/radio is using the player/i)).toBeInTheDocument()
+    expect(screen.getByText(/la radio está usando el reproductor/i)).toBeInTheDocument()
     expect(store.get(isVideoPlayingAtom)).toBe(false)
 
-    fireEvent.click(screen.getByRole('button', { name: /resume tv/i }))
+    fireEvent.click(screen.getByRole('button', { name: /reanudar tv/i }))
     await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalledTimes(2))
   })
 

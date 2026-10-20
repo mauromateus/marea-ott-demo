@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { translate } from 'core/Translation'
+
 const Note = styled.p`
   color: ${({ theme }) => theme.colors.textMuted};
   font-size: 0.85rem;
@@ -19,5 +21,5 @@ const Note = styled.p`
 `
 
 export default function ExampleNote () {
-  return <Note>Example content: titles and artwork are made up for this demo.</Note>
+  return <Note>{translate('common.exampleNote')}</Note>
 }

@@ -4,34 +4,60 @@ import { Helmet } from 'react-helmet'
 
 import { Button, ButtonAnchor } from 'components/common/Button/Button.styles'
 import InstallButton from 'components/common/InstallButton/InstallButton'
+import useCanShowInstall from 'components/common/InstallButton/hooks/useCanShowInstall'
+import Tabs from 'components/common/Tabs/Tabs'
+import Accordion from 'components/common/Accordion/Accordion'
 import useCopyText from 'components/common/hooks/useCopyText'
 import { InstallIcon } from 'components/common/Icons/Icons'
 import { useAppContext } from 'components/context/AppContext/AppContext'
+import { translate } from 'core/Translation'
 import { readInstallContext } from 'core/Utils/detectInstallContext'
 import getSiteUrl from 'core/Utils/getSiteUrl'
 import QrCode from './QrCode'
+import usePhoneLayout from './hooks/usePhoneLayout'
 import getApkUrl from './utils/getApkUrl'
+import getInstallPlatform from './utils/getInstallPlatform'
 
 const Page = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+
+  > * { max-width: 100%; }
+`
+
+const Intro = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+
+  h1 { font-size: clamp(2rem, 7vw, 2.8rem); }
 `
 
 const Lead = styled.p`
   color: ${({ theme }) => theme.colors.textMuted};
-  max-width: 68ch;
+  font-size: 1.1rem;
 `
 
 const Status = styled.p`
-  align-self: flex-start;
-  padding: 8px 16px;
+  margin-top: 6px;
+  padding: 6px 14px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.pill};
   background: ${({ theme }) => theme.colors.surface};
+  font-size: 0.95rem;
   font-weight: 500;
 
   &[data-installed='true'] { border-color: ${({ theme }) => theme.colors.accent}; color: ${({ theme }) => theme.colors.accent}; }
+`
+
+const Section = styled.div`
+  width: 100%;
 `
 
 const Card = styled.section`
@@ -39,6 +65,7 @@ const Card = styled.section`
   flex-wrap: wrap;
   align-items: center;
   gap: 24px;
+  width: 100%;
   padding: 20px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.md};
@@ -46,15 +73,19 @@ const Card = styled.section`
 `
 
 const CardBody = styled.div`
-  flex: 1 1 260px;
+  flex: 1 1 240px;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 12px;
+
+  h2 { font-size: 1.15rem; }
 `
 
 const Url = styled.code`
   display: block;
+  max-width: 100%;
   padding: 10px 12px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.sm};
@@ -73,114 +104,139 @@ const Actions = styled.div`
   gap: 12px 14px;
 `
 
-const Steps = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-`
-
-const StepCard = styled.section`
+const Steps = styled.ol`
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.radii.md};
-  background: ${({ theme }) => theme.colors.surface};
+  gap: 12px;
+  counter-reset: step;
 
-  h2 { font-size: 1.15rem; }
-  ol { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 6px; }
-  strong { color: ${({ theme }) => theme.colors.accent}; font-weight: 600; }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    counter-increment: step;
+  }
+
+  li::before {
+    content: counter(step);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.colors.accent};
+    color: #04211e;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
 `
 
 const Note = styled.p`
   color: ${({ theme }) => theme.colors.textMuted};
   font-size: 0.9rem;
-  max-width: 68ch;
 `
+
+// Literal keys on purpose: the dictionary test scans source for them.
+const STEP_KEYS = {
+  android: ['install.steps.android.1', 'install.steps.android.2', 'install.steps.android.3'],
+  iphone: ['install.steps.iphone.1', 'install.steps.iphone.2', 'install.steps.iphone.3'],
+  desktop: ['install.steps.desktop.1', 'install.steps.desktop.2', 'install.steps.desktop.3']
+}
+
+const LABEL_KEYS = {
+  android: 'install.tabs.android',
+  iphone: 'install.tabs.iphone',
+  desktop: 'install.tabs.desktop'
+}
+
+const PLATFORM_ORDER = ['android', 'iphone', 'desktop']
+
+const StepList = ({ platform, name }) => (
+  <Steps>
+    {STEP_KEYS[platform].map((key) => <li key={key}>{translate(key, { name })}</li>)}
+  </Steps>
+)
 
 export default function ViewInstall () {
   const { config, platform } = useAppContext()
-  const brand = config.brand.name
+  const name = config.brand.name
   const siteUrl = useMemo(() => getSiteUrl(), [])
   const apkUrl = getApkUrl(config)
   const [context] = useState(readInstallContext)
+  const isPhone = usePhoneLayout()
+  const { canShow: canInstall } = useCanShowInstall()
   const { ref, copy, message } = useCopyText(siteUrl, 'link')
 
-  let status = 'Not running as an installed app.'
-  let installed = false
-  if (platform === 'android') {
-    status = `You are using the ${brand} Android app.`
-    installed = true
-  } else if (platform === 'pwa-web' || context.isStandalone) {
-    status = `Already installed: you are using ${brand} as an app.`
-    installed = true
-  }
+  const installed = platform === 'android' || platform === 'pwa-web' || context.isStandalone
+  const detected = getInstallPlatform(context)
+
+  // Phone: the button when the browser offers it, otherwise the steps for this device only. Nothing to do once installed.
+  const phoneSteps = isPhone && !canInstall && !installed
+  const wide = !isPhone
 
   return (
     <Page>
-      <Helmet><title>Install</title></Helmet>
-      <h1>Install {brand}</h1>
-      <Lead>
-        {brand} runs in the browser and can also live on your home screen or desktop, full screen and one tap away.
-      </Lead>
+      <Helmet><title>{translate('install.pageTitle')}</title></Helmet>
 
-      <Status role='status' aria-label='Install status' data-installed={installed}>{status}</Status>
+      <Intro>
+        <h1>{translate('install.title', { name })}</h1>
+        <Lead>{translate('install.lead')}</Lead>
+        <Status role='status' aria-label={translate('install.status.label')} data-installed={installed}>
+          {translate(installed ? 'install.status.installed' : 'install.status.notInstalled')}
+        </Status>
+      </Intro>
 
-      <InstallButton />
+      <InstallButton large />
 
-      <Card aria-labelledby='install-qr-heading'>
-        <QrCode value={siteUrl} label={`QR code that opens ${brand}`} />
-        <CardBody>
-          <h2 id='install-qr-heading'>Open it on your phone</h2>
-          <p>Scan the code with your phone camera, or send yourself the link.</p>
-          <Url ref={ref} tabIndex={0}>{siteUrl}</Url>
-          <Actions>
-            <Button type='button' $variant='secondary' onClick={copy}>Copy link</Button>
-            <span role='status'>{message}</span>
-          </Actions>
-        </CardBody>
-      </Card>
+      {phoneSteps && (
+        <Section>
+          <Accordion
+            idPrefix='install-steps'
+            defaultOpen={detected}
+            items={[{ id: detected, title: translate(LABEL_KEYS[detected]), content: <StepList platform={detected} name={name} /> }]}
+          />
+        </Section>
+      )}
 
-      <Steps>
-        <StepCard>
-          <h2>Android (Chrome)</h2>
-          <ol>
-            <li>Tap <strong>Install app</strong> on this page when it shows up, or open the Chrome menu (three dots).</li>
-            <li>Choose <strong>Install app</strong>.</li>
-            <li>Confirm. {brand} opens like any other app.</li>
-          </ol>
-        </StepCard>
-        <StepCard>
-          <h2>iPhone and iPad (Safari)</h2>
-          <ol>
-            <li>Open this page in Safari.</li>
-            <li>Tap <strong>Share</strong>.</li>
-            <li>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</li>
-          </ol>
-        </StepCard>
-        <StepCard>
-          <h2>Desktop (Chrome or Edge)</h2>
-          <ol>
-            <li>Look for the install icon at the right end of the address bar.</li>
-            <li>Click it, then choose <strong>Install</strong>.</li>
-            <li>Or use the <strong>Install app</strong> button when it shows up.</li>
-          </ol>
-        </StepCard>
-      </Steps>
+      {wide && (
+        <Card aria-labelledby='install-qr-heading'>
+          <QrCode value={siteUrl} label={translate('install.qr.label', { name })} />
+          <CardBody>
+            <h2 id='install-qr-heading'>{translate('install.qr.heading')}</h2>
+            <p>{translate('install.qr.hint')}</p>
+            <Url ref={ref} tabIndex={0}>{siteUrl}</Url>
+            <Actions>
+              <Button type='button' $variant='secondary' onClick={copy}>{translate('install.qr.copy')}</Button>
+              <span role='status'>{message}</span>
+            </Actions>
+          </CardBody>
+        </Card>
+      )}
+
+      {wide && (
+        <Section>
+          <Tabs
+            idPrefix='install-tabs'
+            label={translate('install.tabs.label')}
+            defaultTab={detected}
+            tabs={PLATFORM_ORDER.map((id) => ({ id, label: translate(LABEL_KEYS[id]), content: <StepList platform={id} name={name} /> }))}
+          />
+        </Section>
+      )}
 
       {apkUrl && (
         <Card aria-labelledby='install-apk-heading'>
           <CardBody>
-            <h2 id='install-apk-heading'>Android app (APK)</h2>
-            <p>Prefer a standalone Android app? Download the APK and open it on your phone.</p>
-            <Note>Android may ask you to allow installs from this source the first time.</Note>
+            <h2 id='install-apk-heading'>{translate('install.apk.heading')}</h2>
+            <p>{translate('install.apk.hint')}</p>
+            <Note>{translate('install.apk.note')}</Note>
             <Actions>
-              <ButtonAnchor href={apkUrl} download rel='noopener'><InstallIcon />Download Android app</ButtonAnchor>
+              <ButtonAnchor href={apkUrl} download rel='noopener'><InstallIcon />{translate('install.apk.download')}</ButtonAnchor>
             </Actions>
           </CardBody>
         </Card>

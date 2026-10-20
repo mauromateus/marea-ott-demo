@@ -1,9 +1,11 @@
 const IOS_UA = /iPad|iPhone|iPod/
+const IPHONE_UA = /iPhone|iPod/
 const ANDROID_UA = /Android/i
 
 /**
  * Pure device detection for the install UI.
  * iPadOS 13+ Safari sends a desktop Mac UA, so it is told apart by MacIntel plus touch points.
+ * isIphone is false for every iPad, including that desktop-class UA.
  */
 export default function detectInstallContext ({
   userAgent = '',
@@ -15,6 +17,7 @@ export default function detectInstallContext ({
   const isIos = IOS_UA.test(userAgent) || (platform === 'MacIntel' && maxTouchPoints > 1)
   return {
     isIos,
+    isIphone: IPHONE_UA.test(userAgent),
     isAndroid: !isIos && ANDROID_UA.test(userAgent),
     isStandalone: !!navigatorStandalone || !!displayModeStandalone
   }
@@ -39,4 +42,4 @@ export const readInstallContext = () => detectInstallContext({
 // Install UI belongs to the browser only: shells (TWA, TV, native) and the installed app must never offer it.
 export const canShowInstallUi = (platform) => platform === 'web'
 
-export const shouldShowIosBanner = ({ context, platform }) => !!context?.isIos && !context.isStandalone && canShowInstallUi(platform)
+export const shouldShowIosInstructions = ({ context, platform }) => !!context?.isIos && !context.isStandalone && canShowInstallUi(platform)

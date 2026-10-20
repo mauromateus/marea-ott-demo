@@ -34,3 +34,9 @@ export const CloseIcon = () => (
     <path d='M6 6l12 12' /><path d='M18 6 6 18' />
   </svg>
 )
+
+export const ArrowDownIcon = () => (
+  <svg {...base} fill='none' stroke='currentColor' strokeWidth='2.4' strokeLinecap='round' strokeLinejoin='round'>
+    <path d='M12 5v14' /><path d='m6 13 6 6 6-6' />
+  </svg>
+)

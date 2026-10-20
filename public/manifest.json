@@ -1,7 +1,8 @@
 {
-  "name": "Marea",
+  "name": "Marea: TV y radio en vivo",
   "short_name": "Marea",
-  "description": "Live TV and radio from the coast.",
+  "description": "TV y radio en vivo, directo desde la costa.",
+  "lang": "es",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

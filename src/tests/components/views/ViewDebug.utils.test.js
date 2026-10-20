@@ -59,21 +59,21 @@ describe('formatReport', () => {
   const report = formatReport(diagnostics, events)
 
   it('is plain text with one labelled line per diagnostic', () => {
-    expect(report).toContain('Resolved platform: android (referrer)')
-    expect(report).toContain('Analytics appName: marea-pwa-android')
-    expect(report).toContain('Display mode: standalone')
+    expect(report).toContain('Plataforma resuelta: android (referrer)')
+    expect(report).toContain('appName de analítica: marea-pwa-android')
+    expect(report).toContain('Modo de pantalla (display-mode): standalone')
     expect(report).toContain('document.referrer: android-app://com.example.twa')
-    expect(report).toContain('User agent: UA/1.0')
-    expect(report).toContain('Service worker controls page: yes')
-    expect(report).toContain('Online: no')
+    expect(report).toContain('userAgent: UA/1.0')
+    expect(report).toContain('El service worker controla la página: sí')
+    expect(report).toContain('En línea: no')
   })
 
   it('shows an empty referrer explicitly', () => {
-    expect(formatReport({ ...diagnostics, referrer: '' }, [])).toContain('document.referrer: (empty)')
+    expect(formatReport({ ...diagnostics, referrer: '' }, [])).toContain('document.referrer: (vacío)')
   })
 
   it('lists the events with their timestamps, newest first', () => {
-    expect(report).toContain('dataLayer events (last 2)')
+    expect(report).toContain('Eventos de dataLayer (últimos 2)')
     const first = report.indexOf('ms_event_video_start')
     const second = report.indexOf('ms_event_page_view')
     expect(first).toBeGreaterThan(-1)
@@ -82,6 +82,6 @@ describe('formatReport', () => {
   })
 
   it('handles no events', () => {
-    expect(formatReport(diagnostics, [])).toContain('dataLayer events (last 0)')
+    expect(formatReport(diagnostics, [])).toContain('Eventos de dataLayer (últimos 0)')
   })
 })
