@@ -25,7 +25,7 @@ npx serve -s build -l 5050
 
 Open `http://localhost:5050`. `localhost` counts as a secure context, so install and service worker work. For a real phone you need HTTPS (a tunnel such as ngrok or Cloudflare Tunnel works).
 
-Pass the platform the way a native shell would, by launching with a query parameter: `http://localhost:5050/?ms_platform=android`. Then open `/debug`.
+Pass the platform the way a native shell would, by launching with a query parameter: `http://localhost:5050/?ms_platform=android`. On a desktop the value is honored only while the parameter is in the URL (a stored value that contradicts the device is discarded on every load). To see the diagnostics, open `/?debug=1` once, then use the footer link or `/debug`.
 
 ## Deploy to GitHub Pages
 
@@ -54,7 +54,7 @@ Local secrets for Node scripts live in `.env` (git-ignored, never read by this a
 - The header also has an "Instalar app" pill (visible in the first row at 360px), and `/install` has the same button.
 - All of it is shown only when the resolved platform is `web`, so never inside the Android app (`android`) or the installed app (`pwa-web`), and the sheet never shows on `/install` or `/debug`.
 - `/install` is built for phones: short title, one-line lead, status chip, then the install button or only the steps for the detected platform (no QR on phones). Wide screens get the QR tile with Copiar enlace and tabs Android, iPhone and Computador. Set `install.apkUrl` in `public/config/marea.json` to show an Android APK download; leave it empty to hide that section.
-- `/debug` has an "Estado de instalación" section that explains why the install UI may be hidden (stored platform in the tab, 7 day snooze, installed mark, no browser offer) and a "Restablecer estado de instalación" button that clears those three and reloads; see [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md).
+- `/debug` has a read-only "Estado de instalación" section that explains why the install UI may be hidden (stored platform in the tab, 7 day snooze, installed mark, no browser offer). There is no reset button: a stale platform heals itself on the next load; see [ADR 0001](docs/decisions/0001-platform-resolver.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md).
 - Events: `ms_event_install_prompt_shown`, `ms_event_install_choice` (`ms_install_outcome`), `ms_event_app_installed`, `ms_event_install_sheet_shown`, `ms_event_install_sheet_dismissed`, visible on `/debug`.
 - `beforeinstallprompt` only works on a real Chromium browser over HTTPS or localhost; see [ADR 0005](docs/decisions/0005-install-experience.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md) for how to test each device.
 
@@ -80,7 +80,7 @@ To add a language (for example `en` or `pt`):
 | `/` | Inicio: Marea TV live card, Marea Radio live card, Swiper rails of sample content |
 | `/tv` | Live video (Lightning player) in a 16:9 frame |
 | `/radio` | Live audio. Playback continues on other routes through a mini player |
-| `/debug` | Diagnóstico. What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker, online state, last 20 dataLayer events, "Copiar informe" button |
+| `/debug` | Hidden unless debug mode is on (open `/?debug=1` once; `?debug=0` turns it off; otherwise it redirects to `/`). Diagnóstico. What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker, online state, last 20 dataLayer events, "Copiar informe" button |
 | `/install` | How to install: status chip, Instalar app button when available, steps for the detected platform on phones, QR code with Copiar enlace and tabs (Android, iPhone, Computador) on wide screens, optional Android APK download |
 
 ## Folder map

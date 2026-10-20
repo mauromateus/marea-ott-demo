@@ -61,7 +61,13 @@ What each piece needs from the platform team:
 
 ## 6. Debug page
 
-`src/components/views/ViewDebug/` is self-contained and can be mounted under a route that is only enabled for internal builds (`?debug` flag or non-production). It is not meant for end users.
+`src/components/views/ViewDebug/` is self-contained and is not meant for end users. Marea gates it behind a session debug flag, the same convention as the real product's `gtmDebug`:
+
+- `src/core/Utils/debugMode.js`: `?debug=1` stores `ms_debug` in the session (through the `Session` wrapper), `?debug=0` removes it, anything else changes nothing. Off by default.
+- `useDebugMode` syncs the flag from the router location during render, `DebugGate` redirects to `/` when it is off, and the footer link renders only when it is on. Keep the route, the link and every other entry point behind the same hook, or the page leaks to clients.
+- It is not a security boundary, only a way to keep a diagnostics page out of sight.
+
+Platform values: never trust a stored or injected platform on its own. Marea validates it against the user agent (`isPlatformPlausible` in `src/core/Utils/getPlatformOrigin.js`, rules in `docs/decisions/0001-platform-resolver.md`) on every load, discards a stored value that contradicts the device, and persists a query or referrer value only when it fits. Without this, a value left in the session by an earlier simulation (or shared by a TWA with the browser) silently hides install UI on the wrong device. Port the check together with the resolver, and drop any "reset" button for it: the state should heal itself.
 
 ## What not to port
 

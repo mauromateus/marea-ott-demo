@@ -33,13 +33,10 @@ export default {
   'debug.install.label.card': 'Tarjeta de instalación',
   'debug.install.label.installedMark': 'Marca de instalada guardada',
   'debug.install.storedPlatformNone': 'ninguna',
-  'debug.install.storedPlatformHint': 'Este valor oculta la instalación en esta pestaña hasta que lo restablezcas.',
   'debug.install.card.available': 'Disponible',
   'debug.install.card.snoozed': 'Pospuesta hasta {until}',
   'debug.install.card.hiddenInstalled': 'Oculta: marcada como instalada',
   'debug.install.card.hiddenPlatform': 'Oculta: la plataforma no es web',
   'debug.install.card.hiddenRoute': 'Oculta en esta ruta',
-  'debug.install.card.noOffer': 'Sin oferta del navegador',
-  'debug.install.reset': 'Restablecer estado de instalación',
-  'debug.install.resetDone': 'Estado restablecido. Recargando…'
+  'debug.install.card.noOffer': 'Sin oferta del navegador'
 }

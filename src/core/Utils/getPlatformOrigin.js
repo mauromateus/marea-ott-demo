@@ -1,4 +1,5 @@
 import Session from 'core/Session'
+import detectInstallContext from 'core/Utils/detectInstallContext'
 
 export const PLATFORMS = ['web', 'pwa-web', 'android', 'android-tv', 'fire-tv', 'samsung-tv', 'lg-tv', 'ios']
 export const PLATFORM_QUERY_PARAM = 'ms_platform'
@@ -10,6 +11,28 @@ const ANDROID_APP_REFERRER = 'android-app://'
 const normalize = (value) => (typeof value === 'string' ? value.trim().toLowerCase() : '')
 
 export const isValidPlatform = (value) => PLATFORMS.includes(normalize(value))
+
+const TIZEN_UA = /Tizen|SMART-TV/i
+const LG_UA = /Web0S|webOS|NetCast/i
+const ANDROID_PLATFORMS = ['android', 'android-tv', 'fire-tv']
+
+/**
+ * Whether a platform value is consistent with the device. Shells inject or store a value, but a desktop tab
+ * must never believe it runs inside the Android shell, so a contradicting value is ignored.
+ */
+export const isPlatformPlausible = (platform, { userAgent = '', maxTouchPoints = 0, navigatorPlatform = '' } = {}) => {
+  const value = normalize(platform)
+  if (value === 'web' || value === 'pwa-web') return true
+  const ua = typeof userAgent === 'string' ? userAgent : ''
+  // iPadOS 13+ sends a desktop Mac UA; detectInstallContext tells it apart by MacIntel plus touch points.
+  const macPlatform = navigatorPlatform || (/Macintosh/i.test(ua) ? 'MacIntel' : '')
+  const context = detectInstallContext({ userAgent: ua, platform: macPlatform, maxTouchPoints })
+  if (ANDROID_PLATFORMS.includes(value)) return context.isAndroid
+  if (value === 'samsung-tv') return TIZEN_UA.test(ua)
+  if (value === 'lg-tv') return LG_UA.test(ua)
+  if (value === 'ios') return context.isIos || /iPad|iPhone|iPod/i.test(ua)
+  return false
+}
 
 /**
  * Pure resolver. Priority:
@@ -66,17 +89,33 @@ export const resetPlatformOrigin = () => {
   resolved = null
 }
 
-/** Call once at boot, before the first render. */
+const readDevice = () => {
+  const nav = typeof window !== 'undefined' ? window.navigator : {}
+  return { userAgent: nav.userAgent, maxTouchPoints: nav.maxTouchPoints, navigatorPlatform: nav.platform }
+}
+
+/**
+ * Call once at boot, before the first render. Verifies platform state against the device on every load:
+ * a stored value that contradicts the device is discarded, and a query or referrer value is honored for this
+ * load but only persisted when plausible, so stale values disappear on the next refresh.
+ */
 export const initPlatformOrigin = ({ useReferrerSignal = true } = {}) => {
+  const device = readDevice()
+  let storedValue = Session.getItem(PLATFORM_SESSION_KEY)
+  if (storedValue !== undefined && storedValue !== null && !isPlatformPlausible(storedValue, device)) {
+    Session.removeItem(PLATFORM_SESSION_KEY)
+    storedValue = null
+  }
+
   const result = resolvePlatform({
     queryValue: readQueryValue(),
-    storedValue: Session.getItem(PLATFORM_SESSION_KEY),
+    storedValue,
     referrer: typeof document !== 'undefined' ? document.referrer : '',
     isStandalone: isStandaloneMode(),
     useReferrerSignal
   })
 
-  if (result.persist) {
+  if (result.persist && isPlatformPlausible(result.platform, device)) {
     Session.setItem(PLATFORM_SESSION_KEY, result.platform)
   }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
+import useDebugMode from 'components/common/hooks/useDebugMode'
 import { translate } from 'core/Translation'
 
 const Bar = styled.footer`
@@ -45,13 +46,14 @@ Footer.propTypes = {
 }
 
 export default function Footer ({ brandName, version }) {
+  const debugMode = useDebugMode()
   return (
     <Bar>
       <Inner>
         <span>{translate('common.footer.demo', { name: brandName })}{version ? ` · v${version}` : ''}</span>
         <Links aria-label={translate('common.footer.label')}>
           <FooterLink to='/install'>{translate('common.footer.install')}</FooterLink>
-          <FooterLink to='/debug'>{translate('common.footer.debug')}</FooterLink>
+          {debugMode && <FooterLink to='/debug'>{translate('common.footer.debug')}</FooterLink>}
         </Links>
       </Inner>
     </Bar>

@@ -7,7 +7,7 @@ const installSection = (rows) => {
   }
   return [
     translate('debug.install.title'),
-    ...rows.flatMap(({ label, value, hint }) => (hint ? [`${label}: ${value}`, `  ${hint}`] : [`${label}: ${value}`])),
+    ...rows.map(({ label, value }) => `${label}: ${value}`),
     ''
   ]
 }
@@ -17,7 +17,7 @@ const installSection = (rows) => {
  * @param {object} d - result of collectDiagnostics
  * @param {Array<{at: number, payload: object}>} events - oldest first, as kept by DataLayerService
  * @param {string} [brandName]
- * @param {Array<{label: string, value: string, hint?: string}>} [installRows] - from buildInstallRows; the section is skipped when empty
+ * @param {Array<{label: string, value: string}>} [installRows] - from buildInstallRows; the section is skipped when empty
  */
 export default function formatReport (d, events, brandName = 'Marea', installRows = []) {
   const lines = [

@@ -10,6 +10,7 @@ import GTMProvider from 'components/context/GoogleTagManager/GoogleTagManager'
 import AudioPlayerProvider from 'components/context/PlayerContext/AudioPlayerProvider'
 import Header from 'components/common/Header/Header'
 import Footer from 'components/common/Footer/Footer'
+import DebugGate from 'components/common/DebugGate/DebugGate'
 import InstallSheet from 'components/common/InstallSheet/InstallSheet'
 import UpdateToast from 'components/common/UpdateToast/UpdateToast'
 import MiniPlayer from 'components/content/MiniPlayer/MiniPlayer'
@@ -62,7 +63,7 @@ export default function App ({ config, platformDetails }) {
                     <Route exact path='/' component={ViewHome} />
                     <Route path='/tv' component={ViewTv} />
                     <Route path='/radio' component={ViewRadio} />
-                    <Route path='/debug' component={ViewDebug} />
+                    <Route path='/debug'><DebugGate><ViewDebug /></DebugGate></Route>
                     <Route path='/install' component={ViewInstall} />
                     <Redirect to='/' />
                   </Switch>

@@ -42,7 +42,7 @@ describe('key components render Spanish', () => {
   })
 
   it('Footer', () => {
-    renderWithProviders(<Footer brandName='Marea' version='0.1.0' />, { withAudio: false })
+    renderWithProviders(<Footer brandName='Marea' version='0.1.0' />, { route: '/?debug=1', withAudio: false })
     expect(screen.getByText('Demostración de Marea · v0.1.0')).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Pie de página' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Diagnóstico' })).toBeInTheDocument()

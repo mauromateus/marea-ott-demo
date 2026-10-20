@@ -28,10 +28,23 @@ describe('collectDiagnostics', () => {
     expect(['yes', 'no', 'not supported']).toContain(d.serviceWorkerControlling)
   })
 
-  it('reports the launch query string and the stored session value', () => {
+  it('reports the launch query string and the stored session value on a matching device', () => {
+    Object.defineProperty(window.navigator, 'userAgent', { value: 'Mozilla/5.0 (Linux; Android 11; BRAVIA 4K GB)', configurable: true })
+    try {
+      resetPlatformOrigin()
+      initPlatformOrigin()
+      const d = collectDiagnostics({ config: marea, platformDetails: { platform: 'android-tv', source: 'query' } })
+      expect(d.launchQuery).toBe('?ms_platform=android-tv')
+      expect(d.sessionPlatform).toBe('android-tv')
+    } finally {
+      delete window.navigator.userAgent
+    }
+  })
+
+  it('reports no stored platform when the launch value does not fit the device', () => {
     const d = collectDiagnostics({ config: marea, platformDetails: { platform: 'android-tv', source: 'query' } })
     expect(d.launchQuery).toBe('?ms_platform=android-tv')
-    expect(d.sessionPlatform).toBe('android-tv')
+    expect(d.sessionPlatform).toBe('')
   })
 })
 

@@ -1,17 +1,15 @@
 import React from 'react'
-import { screen, fireEvent, act, within } from '@testing-library/react'
+import { screen, act, within } from '@testing-library/react'
 
 import ViewDebug from 'components/views/ViewDebug'
 import formatReport from 'components/views/ViewDebug/utils/formatReport'
 import InstallPromptService from 'core/services/InstallPromptService'
 import Session from 'core/Session'
 import Storage from 'core/Storage'
-import { PLATFORM_SESSION_KEY } from 'core/Utils/getPlatformOrigin'
+import { PLATFORM_SESSION_KEY, initPlatformOrigin, resetPlatformOrigin } from 'core/Utils/getPlatformOrigin'
 import { INSTALL_SHEET_DISMISSED_KEY, INSTALL_SHEET_INSTALLED_KEY } from 'components/common/InstallSheet/hooks/useInstallSheet'
 import { SNOOZE_MS } from 'components/common/InstallSheet/utils/isSnoozed'
 import renderWithProviders from '../../utils/renderWithProviders'
-
-const originalLocation = window.location
 
 const fireBeforeInstallPrompt = () => {
   const event = new Event('beforeinstallprompt', { cancelable: true })
@@ -29,15 +27,10 @@ beforeEach(() => {
   window.sessionStorage.clear()
   InstallPromptService.reset()
   window.matchMedia = () => ({ matches: false, addListener () {}, removeListener () {} })
-  // jsdom cannot reload: swap the location for a copy whose reload is a spy.
-  delete window.location
-  window.location = { ...originalLocation, reload: jest.fn() }
 })
 
 afterEach(() => {
-  window.location = originalLocation
   InstallPromptService.reset()
-  jest.useRealTimers()
 })
 
 describe('install state panel rows', () => {
@@ -56,7 +49,6 @@ describe('install state panel rows', () => {
     expect(valueOf('Plataforma guardada en esta pestaña')).toHaveTextContent('ninguna')
     expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Sin oferta del navegador')
     expect(valueOf('Marca de instalada guardada')).toHaveTextContent('No')
-    expect(within(panel()).queryByText(/hasta que lo restablezcas/)).not.toBeInTheDocument()
   })
 
   it('updates live when the browser offers the install later', () => {
@@ -93,90 +85,35 @@ describe('install state panel rows', () => {
     expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Oculta: marcada como instalada')
   })
 
-  it('shows a stored platform other than web with a hint and hides the card for it', () => {
+  it('shows a stored platform other than web and says the card is hidden for it', () => {
     Session.setItem(PLATFORM_SESSION_KEY, 'android')
     renderDebug({ platform: 'android' })
     expect(valueOf('Plataforma resuelta')).toHaveTextContent('android')
     expect(valueOf('Plataforma guardada en esta pestaña')).toHaveTextContent('android')
     expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Oculta: la plataforma no es web')
-    expect(within(panel()).getByText('Este valor oculta la instalación en esta pestaña hasta que lo restablezcas.')).toBeInTheDocument()
   })
 
-  it('shows no hint for a stored web platform', () => {
+  it('shows a stored web platform', () => {
     Session.setItem(PLATFORM_SESSION_KEY, 'web')
     renderDebug()
     expect(valueOf('Plataforma guardada en esta pestaña')).toHaveTextContent('web')
-    expect(within(panel()).queryByText(/hasta que lo restablezcas/)).not.toBeInTheDocument()
   })
 
-  it('shows no hint for a stored value the resolver ignores', () => {
-    Session.setItem(PLATFORM_SESSION_KEY, 'toaster')
-    renderDebug()
-    expect(valueOf('Plataforma guardada en esta pestaña')).toHaveTextContent('toaster')
-    expect(within(panel()).queryByText(/hasta que lo restablezcas/)).not.toBeInTheDocument()
-  })
-})
-
-describe('reset button', () => {
-  const seed = () => {
+  it('after a stale android value heals on load the panel reports web and nothing stored', () => {
     Session.setItem(PLATFORM_SESSION_KEY, 'android')
-    Session.setItem('unrelated-session', 'keep')
-    Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, Date.now())
-    Storage.setItem(INSTALL_SHEET_INSTALLED_KEY, true)
-    Storage.setItem('marea:unrelated', 'keep')
-  }
-  const press = () => fireEvent.click(screen.getByRole('button', { name: 'Restablecer estado de instalación' }))
-
-  it('clears exactly the platform, the dismissal and the installed mark', () => {
-    jest.useFakeTimers()
-    seed()
-    renderDebug()
-    press()
-    expect(window.sessionStorage.getItem(PLATFORM_SESSION_KEY)).toBeNull()
-    expect(window.localStorage.getItem(INSTALL_SHEET_DISMISSED_KEY)).toBeNull()
-    expect(window.localStorage.getItem(INSTALL_SHEET_INSTALLED_KEY)).toBeNull()
-    expect(window.sessionStorage.getItem('unrelated-session')).toBe('keep')
-    expect(window.localStorage.getItem('marea:unrelated')).toBe('keep')
-    expect(window.localStorage.length).toBe(1)
-    expect(window.sessionStorage.length).toBe(1)
+    resetPlatformOrigin()
+    const { platform } = initPlatformOrigin()
+    renderDebug({ platform })
+    expect(valueOf('Plataforma resuelta')).toHaveTextContent('web')
+    expect(valueOf('Plataforma guardada en esta pestaña')).toHaveTextContent('ninguna')
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Sin oferta del navegador')
   })
 
-  it('confirms with a status message and reloads once after a short delay', () => {
-    jest.useFakeTimers()
-    seed()
-    renderDebug()
-    press()
-    expect(within(panel()).getByRole('status')).toHaveTextContent('Estado restablecido. Recargando…')
-    expect(window.location.reload).not.toHaveBeenCalled()
-    act(() => { jest.advanceTimersByTime(5000) })
-    expect(window.location.reload).toHaveBeenCalledTimes(1)
-  })
-
-  it('cannot be pressed twice while it reloads', () => {
-    jest.useFakeTimers()
-    renderDebug()
-    press()
-    expect(screen.getByRole('button', { name: 'Restablecer estado de instalación' })).toBeDisabled()
-    press()
-    act(() => { jest.advanceTimersByTime(5000) })
-    expect(window.location.reload).toHaveBeenCalledTimes(1)
-  })
-
-  it('does not reload if the page is left before the delay ends', () => {
-    jest.useFakeTimers()
-    const { unmount } = renderDebug()
-    press()
-    unmount()
-    act(() => { jest.advanceTimersByTime(5000) })
-    expect(window.location.reload).not.toHaveBeenCalled()
-  })
-
-  it('works when nothing was stored', () => {
-    jest.useFakeTimers()
-    renderDebug()
-    press()
-    act(() => { jest.advanceTimersByTime(5000) })
-    expect(window.location.reload).toHaveBeenCalledTimes(1)
+  it('has no reset button and no reset hint', () => {
+    Session.setItem(PLATFORM_SESSION_KEY, 'android')
+    renderDebug({ platform: 'android' })
+    expect(screen.queryByRole('button', { name: /restablecer/i })).not.toBeInTheDocument()
+    expect(within(panel()).queryByText(/restablezcas/)).not.toBeInTheDocument()
   })
 })
 
@@ -192,7 +129,7 @@ describe('copy report', () => {
     expect(text).toContain('El navegador ofreció instalar: No')
     expect(text).toContain('Plataforma resuelta: android')
     expect(text).toContain('Plataforma guardada en esta pestaña: android')
-    expect(text).toContain('Este valor oculta la instalación en esta pestaña hasta que lo restablezcas.')
+    expect(text).not.toContain('restablezcas')
     expect(text).toContain('Tarjeta de instalación: Oculta: la plataforma no es web')
     expect(text).toContain('Marca de instalada guardada: Sí')
   })

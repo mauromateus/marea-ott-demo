@@ -2,7 +2,7 @@
 
 Test target: https://mauromateus.github.io/marea-ott-demo/ (GitHub Pages project page; browser, installed PWA and iPhone tests only, it cannot be verified as a TWA, see `docs/decisions/0004-github-pages-subpath.md`).
 
-How to fill a row: open the deployed (HTTPS) build inside the shell under test, launching with the right `?ms_platform=` value when the shell injects it (see `docs/decisions/0001-platform-resolver.md`). Press play on `/tv` and `/radio`, then open `/debug`, press "Copy report" and paste the report below the table (or attach it).
+How to fill a row: open the deployed (HTTPS) build inside the shell under test, launching with the right `?ms_platform=` value when the shell injects it (see `docs/decisions/0001-platform-resolver.md`). Press play on `/tv` and `/radio`, then open `/?debug=1` once (debug mode is off by default and `/debug` redirects home otherwise), go to `/debug` from the footer link, press "Copiar informe" and paste the report below the table (or attach it).
 
 Status values: `pending`, `ok`, `fail`, `n/a`.
 
@@ -21,7 +21,7 @@ Status values: `pending`, `ok`, `fail`, `n/a`.
 
 ## Install experience checks
 
-Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/decisions/0006-install-sheet-and-spanish-ui.md` ("How to test"). `beforeinstallprompt` cannot be simulated, so every row needs a real device or browser on the HTTPS deployment. After each check, open `/debug` and note the install events.
+Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/decisions/0006-install-sheet-and-spanish-ui.md` ("How to test"). `beforeinstallprompt` cannot be simulated, so every row needs a real device or browser on the HTTPS deployment. After each check, open `/debug` (first `/?debug=1` once per tab session) and note the install events.
 
 | Check | Device / browser | Status | Notes |
 |---|---|---|---|
@@ -36,7 +36,7 @@ Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/
 | `/install` on a phone is not saturated | pending | pending | No QR, one title, one line, the big button or one accordion item with at most 3 short steps |
 | Whole UI in Spanish | pending | pending | Walk Inicio, TV, Radio, Instalar, Diagnóstico, the update toast and the error states: no English visible (the player's own controls excepted) |
 
-The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, 7 day snooze, installed mark, or no browser offer) and has a button to reset those values. When an install check does not show the button or the sheet, read that section first and paste the report.
+The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, 7 day snooze, installed mark, or no browser offer) and is read-only: a stale platform heals itself on the next load. When an install check does not show the button or the sheet, open `/?debug=1`, read that section first and paste the report.
 
 ## Expected results
 
