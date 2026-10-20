@@ -38,6 +38,16 @@ Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/
 
 The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, 7 day snooze, installed mark, or no browser offer) and is read-only: a stale platform heals itself on the next load. When an install check does not show the button or the sheet, open `/?debug=1`, read that section first and paste the report.
 
+## Update and offline checks
+
+Steps are in `docs/decisions/0002-pwa-service-worker.md` ("How to test"). They need two deploys of the HTTPS build.
+
+| Check | Device / browser | Status | Notes |
+|---|---|---|---|
+| Reload after a deploy shows the new version without tapping a toast | pending | pending | Network panel: `index.html` is 200 or 304; a deep link to a route added in the new version opens it |
+| Offline reload still opens the app | pending | pending | DevTools > Network > Offline, reload: the precached shell loads (live streams do not, by design) |
+| No toast right after a fresh reload | pending | pending | The toast appears only when a waiting worker's main bundle differs from the page's |
+
 ## Expected results
 
 | Shell | Resolved platform | Analytics appName |

@@ -49,6 +49,8 @@ The real repo has `src/serviceWorker.js` and a CRA-style setup with craco. Marea
 - Keep `src/core/services/ServiceWorker/cacheRules.js` and its tests as they are. Never cache `*.mdstrm.com`, player scripts, manifests or segments.
 - If craco is used, check that InjectManifest still picks up the worker, or switch to a workbox config of your own.
 
+- Fresh navigations: Workbox strategies ignore `fetchOptions` on navigation requests (`request.mode === 'navigate'`), so `NetworkFirst({ fetchOptions: { cache: 'no-cache' } })` does not bypass the HTTP cache. Port `src/core/services/ServiceWorker/navigationHandler.js`: it fetches the shell URL (`PUBLIC_URL + '/index.html'`) with a fresh `new Request(url, { cache: 'no-cache', credentials: 'same-origin' })`, 3 s timeout, precached shell as fallback. Also port `getMainBundleName`, the `GET_VERSION` handler and `ServiceWorkerService.handleUpdate` so the toast only appears when the version differs. If the real build does not emit `main.<hash>.js`, change the version identity (one regex).
+
 What each piece needs from the platform team:
 
 | Piece | Needs |

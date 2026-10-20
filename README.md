@@ -25,6 +25,8 @@ npx serve -s build -l 5050
 
 Open `http://localhost:5050`. `localhost` counts as a secure context, so install and service worker work. For a real phone you need HTTPS (a tunnel such as ngrok or Cloudflare Tunnel works).
 
+With a connection, every reload or visit loads the latest deployed version: the service worker fetches `index.html` from the network first (bypassing the browser HTTP cache, 3 s timeout) and uses the precached copy only offline or on failure. The "nueva versión disponible" toast appears only when a waiting worker carries a different main bundle than the page. See [ADR 0002](docs/decisions/0002-pwa-service-worker.md).
+
 Pass the platform the way a native shell would, by launching with a query parameter: `http://localhost:5050/?ms_platform=android`. On a desktop the value is honored only while the parameter is in the URL (a stored value that contradicts the device is discarded on every load). To see the diagnostics, open `/?debug=1` once, then use the footer link or `/debug`.
 
 ## Deploy to GitHub Pages
@@ -103,6 +105,7 @@ src/
       DataLayerService.js             window.dataLayer + ring buffer for /debug
       Player/                         Lightning loader, config builder, strategy
       ServiceWorker/cacheRules.js     what the SW may and may not cache
+      ServiceWorker/navigationHandler.js  network-first shell for navigations, precache fallback
       ServiceWorkerService.js         waiting-worker state for the update toast
       InstallPromptService.js         captured beforeinstallprompt event, install analytics
   components/
@@ -129,7 +132,7 @@ docs/                       decisions (ADRs), PORTING, test-log, assetlinks exam
 | Audio keeps playing across routes, video and audio exclusive | `AudioPlayerProvider.js`, `playerAtoms.js`, `core/services/Player/index.js` |
 | Config-driven by hostname | `src/core/services/Config/ConfigService.js`, `public/config/marea.json` |
 | Theme (all through a styled-components theme) | `src/components/context/ThemeContext/` |
-| Service worker, update toast | `src/service-worker.js`, `src/core/services/ServiceWorker/cacheRules.js`, `src/components/common/UpdateToast/` |
+| Service worker, fresh navigations, update toast | `src/service-worker.js`, `src/core/services/ServiceWorker/cacheRules.js`, `src/core/services/ServiceWorker/navigationHandler.js`, `src/core/Utils/getMainBundleName.js`, `src/components/common/UpdateToast/` |
 | Manifest, icons, iOS meta tags | `public/manifest.json`, `public/index.html`, `scripts/generate-icons.js` |
 | Digital Asset Links for a TWA | `docs/assetlinks.example.json` |
 | Debug panel | `src/components/views/ViewDebug/` |

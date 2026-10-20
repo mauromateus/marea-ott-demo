@@ -38,5 +38,5 @@ async function boot () {
 boot()
 
 if (process.env.NODE_ENV === 'production') {
-  serviceWorkerRegistration.register({ onUpdate: (registration) => ServiceWorkerService.setRegistration(registration) })
+  serviceWorkerRegistration.register({ onUpdate: (registration) => ServiceWorkerService.handleUpdate(registration) })
 }
