@@ -1,13 +1,25 @@
 import { translate } from 'core/Translation'
 import { orEmpty, orNone, serviceWorkerLabel, yesNo } from './labels'
 
+const installSection = (rows) => {
+  if (!rows.length) {
+    return []
+  }
+  return [
+    translate('debug.install.title'),
+    ...rows.flatMap(({ label, value, hint }) => (hint ? [`${label}: ${value}`, `  ${hint}`] : [`${label}: ${value}`])),
+    ''
+  ]
+}
+
 /**
  * Plain-text report meant to be pasted into the device test log (docs/test-log.md).
  * @param {object} d - result of collectDiagnostics
  * @param {Array<{at: number, payload: object}>} events - oldest first, as kept by DataLayerService
  * @param {string} [brandName]
+ * @param {Array<{label: string, value: string, hint?: string}>} [installRows] - from buildInstallRows; the section is skipped when empty
  */
-export default function formatReport (d, events, brandName = 'Marea') {
+export default function formatReport (d, events, brandName = 'Marea', installRows = []) {
   const lines = [
     translate('debug.report.title', { name: brandName, date: d.generatedAt }),
     '',
@@ -24,6 +36,7 @@ export default function formatReport (d, events, brandName = 'Marea') {
     `${translate('debug.label.viewport')}: ${d.viewport}`,
     `${translate('debug.label.userAgent')}: ${d.userAgent}`,
     '',
+    ...installSection(installRows),
     translate('debug.report.events', { count: events.length })
   ]
 

@@ -15,7 +15,7 @@ export const INSTALL_SHEET_INSTALLED_KEY = 'marea:install-sheet-installed'
 // The page already explains installing in full; /debug is a diagnostics tool.
 const QUIET_ROUTES = ['/install', '/debug']
 
-const isQuietRoute = (pathname) => QUIET_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`))
+export const isQuietRoute = (pathname) => QUIET_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`))
 
 const isHiddenByStorage = () => Storage.getItem(INSTALL_SHEET_INSTALLED_KEY) === true || isSnoozed(Storage.getItem(INSTALL_SHEET_DISMISSED_KEY))
 

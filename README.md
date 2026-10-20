@@ -54,6 +54,7 @@ Local secrets for Node scripts live in `.env` (git-ignored, never read by this a
 - The header also has an "Instalar app" pill (visible in the first row at 360px), and `/install` has the same button.
 - All of it is shown only when the resolved platform is `web`, so never inside the Android app (`android`) or the installed app (`pwa-web`), and the sheet never shows on `/install` or `/debug`.
 - `/install` is built for phones: short title, one-line lead, status chip, then the install button or only the steps for the detected platform (no QR on phones). Wide screens get the QR tile with Copiar enlace and tabs Android, iPhone and Computador. Set `install.apkUrl` in `public/config/marea.json` to show an Android APK download; leave it empty to hide that section.
+- `/debug` has an "Estado de instalación" section that explains why the install UI may be hidden (stored platform in the tab, 7 day snooze, installed mark, no browser offer) and a "Restablecer estado de instalación" button that clears those three and reloads; see [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md).
 - Events: `ms_event_install_prompt_shown`, `ms_event_install_choice` (`ms_install_outcome`), `ms_event_app_installed`, `ms_event_install_sheet_shown`, `ms_event_install_sheet_dismissed`, visible on `/debug`.
 - `beforeinstallprompt` only works on a real Chromium browser over HTTPS or localhost; see [ADR 0005](docs/decisions/0005-install-experience.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md) for how to test each device.
 

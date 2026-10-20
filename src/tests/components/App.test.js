@@ -73,7 +73,8 @@ describe('App routes', () => {
   it('/debug shows the diagnostics and the copy button', async () => {
     renderApp('/debug')
     expect(await screen.findByRole('heading', { name: 'Diagnóstico' })).toBeInTheDocument()
-    expect(screen.getByText('Plataforma resuelta')).toBeInTheDocument()
+    // Shown in the diagnostics grid and again in the install state panel.
+    expect(screen.getAllByText('Plataforma resuelta')).toHaveLength(2)
     expect(screen.getByRole('button', { name: /copiar informe/i })).toBeInTheDocument()
     expect(screen.getByLabelText('Informe en texto plano').textContent).toContain('Plataforma resuelta: lg-tv (query)')
     expect(screen.getByLabelText('Informe en texto plano').textContent).toContain('appName de analítica: marea-lg-tv')

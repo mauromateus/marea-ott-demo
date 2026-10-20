@@ -93,7 +93,8 @@ describe('key components render Spanish', () => {
     renderWithProviders(<ViewDebug />, { route: '/debug' })
     expect(screen.getByRole('heading', { level: 1, name: 'Diagnóstico' })).toBeInTheDocument()
     ;['Plataforma resuelta', 'appName de analítica', 'Modo de pantalla (display-mode)', 'document.referrer', 'userAgent', 'En línea'].forEach((label) => {
-      expect(screen.getByText(label)).toBeInTheDocument()
+      // 'Plataforma resuelta' also appears in the install state panel.
+      expect(screen.getAllByText(label)[0]).toBeInTheDocument()
     })
   })
 

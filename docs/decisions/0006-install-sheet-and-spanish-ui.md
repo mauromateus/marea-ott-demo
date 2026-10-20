@@ -72,3 +72,15 @@ The sheet stores a permanent "installed" mark (`marea:install-sheet-installed`) 
 Decision: the browser only fires `beforeinstallprompt` while the app is not installed. When the hook sees an installable app and finds the mark, it clears the mark and keeps any recent "Not now" snooze. The mark is kept while the browser does not offer the install.
 
 Consequences: detection depends on the browser noticing the uninstall. On Windows and macOS, uninstall from `chrome://apps` (right click, Remove) or from the app's own menu. Removing it from the operating system settings can leave Chrome believing it is still installed until Chrome restarts. Covered by tests in `src/tests/components/common/InstallSheet.test.js` ("after an uninstall").
+
+## Install state panel
+
+Testing the install experience on a desktop browser, hidden state kept suppressing the install UI with nothing on screen to explain it: a platform stored in the tab session by an earlier `?ms_platform=android` (the page believes it runs in the Android shell, so the button and sheet hide and `/install` says "Ya está instalada"), the 7 day "Ahora no" snooze, the stored "installed" mark, or a browser that never offered the install.
+
+Decision: `/debug` has an "Estado de instalación" section right after the diagnostics. Rows: whether the browser offered the install (live, through `InstallPromptService`), the resolved platform, the platform stored in this tab (with a hint when it is a valid value other than `web`), the state of the install card, and the stored installed mark. The button "Restablecer estado de instalación" removes the stored platform (`Session`), the dismissal timestamp and the installed mark (`Storage`, with the keys exported by `useInstallSheet`), shows "Estado restablecido. Recargando…" in a `role="status"` and reloads the page after 900 ms. Nothing else in storage is touched. The same rows go into the copy report.
+
+- The card state comes from the pure `getInstallStateSummary`, which returns a stable code plus params (`hidden-platform`, `hidden-installed`, `snoozed`, `no-offer`, `hidden-route`, `available`). The first cause that applies wins, in that order. It mirrors `useInstallSheet`: the installed mark only counts while the browser is not offering the install (the hook clears it otherwise), iOS needs no browser offer, and `/install` and `/debug` are quiet routes (`isQuietRoute` is now exported). Because `/debug` is a quiet route, the card reads "Oculta en esta ruta" here even when it would show elsewhere.
+- Read-only diagnostics plus the reset: install behavior is unchanged.
+- A launch URL that still carries `?ms_platform=` stores the platform again after the reload; open `/debug` without the query to finish the reset.
+- Tests: `getInstallStateSummary` (every branch and the precedence), the panel states, the reset (exact keys, one reload, unrelated keys untouched) and the report, in `src/tests/components/views/ViewDebug.*.test.js`. Real layout and the real `beforeinstallprompt` are not covered by jsdom.
+

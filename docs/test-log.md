@@ -36,6 +36,8 @@ Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/
 | `/install` on a phone is not saturated | pending | pending | No QR, one title, one line, the big button or one accordion item with at most 3 short steps |
 | Whole UI in Spanish | pending | pending | Walk Inicio, TV, Radio, Instalar, Diagnóstico, the update toast and the error states: no English visible (the player's own controls excepted) |
 
+The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, 7 day snooze, installed mark, or no browser offer) and has a button to reset those values. When an install check does not show the button or the sheet, read that section first and paste the report.
+
 ## Expected results
 
 | Shell | Resolved platform | Analytics appName |
