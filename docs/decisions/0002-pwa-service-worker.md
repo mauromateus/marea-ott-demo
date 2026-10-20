@@ -55,3 +55,11 @@ Tradeoff: a tab that keeps running old JS while a new worker activates can reque
 - Fresh navigations: deploy twice with the same tab or installed app open, reload, and watch the Network panel: `index.html` must show 200 or 304 (not "from ServiceWorker" or "from disk cache") and the new version loads with no toast. A deep link to a route added in the second deploy must open that route.
 - Offline: in DevTools, Network > Offline, reload: the app still opens from the precached shell.
 - No toast right after a fresh reload; the toast appears only when a waiting worker's main bundle differs from the page's.
+
+## Update: precache directory index (found on the deployed site)
+
+The first version of "Fresh navigations" did not reach the home page. `precacheAndRoute` registers a route that, with the default `directoryIndex: 'index.html'`, answers a navigation to `/base/` from the precached `index.html` before the navigation route runs. Deep links such as `/base/tv` did reach the network handler, so the bug only showed on the most common entry point.
+
+Decision: pass `PRECACHE_OPTIONS` (`directoryIndex: null`, `cleanURLs: false`, in `src/core/services/ServiceWorker/precacheOptions.js`) to `precacheAndRoute`, so no navigation is answered by the precache route. Assets and the shell fallback still come from the precache.
+
+Consequences: the unit tests of the handler could not see this, because it lives in Workbox route matching. It was found by reloading the deployed site right after a deploy. A test now pins the options and the wiring, and the real check is a two-version run in a browser (see `docs/test-log.md`).

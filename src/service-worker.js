@@ -7,6 +7,7 @@ import { registerRoute } from 'workbox-routing'
 import { StaleWhileRevalidate } from 'workbox-strategies'
 import { shouldRuntimeCache, isNavigationFallback } from './core/services/ServiceWorker/cacheRules'
 import { createNavigationHandler } from './core/services/ServiceWorker/navigationHandler'
+import { PRECACHE_OPTIONS } from './core/services/ServiceWorker/precacheOptions'
 import getMainBundleName from './core/Utils/getMainBundleName'
 
 clientsClaim()
@@ -15,7 +16,7 @@ clientsClaim()
 // so that config edits do not wait for a new service worker.
 // __WB_MANIFEST must appear once: InjectManifest replaces that single injection point.
 const manifest = self.__WB_MANIFEST.filter((entry) => !/\/config\//.test(entry.url))
-precacheAndRoute(manifest)
+precacheAndRoute(manifest, PRECACHE_OPTIONS)
 
 // Navigations go to the network first (always the newest shell); the precached shell is the offline fallback.
 // Rules in cacheRules.js and navigationHandler.js; the shell lives under PUBLIC_URL.
