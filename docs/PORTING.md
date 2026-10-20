@@ -38,7 +38,7 @@ Audio: the real audio path (`NextPlayer/utils/playAudioContent.js`) does not sen
 
 ## 4. App download banner
 
-`src/components/v2/content/AppDownloadBanner/AppDownloadBanner.js` renders the banner when `useAppBanner()` says `isModalVisible`. Inside an installed PWA or a native shell, the banner makes no sense. In `hooks/useAppBanner`, return not visible when `getPlatformOrigin() !== 'web'`.
+`src/components/v2/content/AppDownloadBanner/AppDownloadBanner.js` renders the banner when `useAppBanner()` says `isModalVisible`. Inside an installed PWA or a native shell, the banner makes no sense. In `hooks/useAppBanner`, return not visible when `getPlatformOrigin() !== 'web'`. The demo's install button and iOS banner avoid the same shell problem the same way (`canShowInstallUi(platform)` in `src/core/Utils/detectInstallContext.js`, ADR 0005): they render only when the resolved platform is `web`.
 
 ## 5. Service worker, manifest, icons (needs the platform team)
 

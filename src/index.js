@@ -7,11 +7,14 @@ import ConfigService from 'core/services/Config/ConfigService'
 import ServiceWorkerService from 'core/services/ServiceWorkerService'
 import { initPlatformOrigin } from 'core/Utils/getPlatformOrigin'
 import getBasename from 'core/Utils/getBasename'
+import InstallPromptService from 'core/services/InstallPromptService'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
 const root = document.getElementById('root')
 
 async function boot () {
+  // Listen before the config fetch: beforeinstallprompt can fire before the first render.
+  InstallPromptService.init()
   try {
     const config = await ConfigService.getJson()
     // Once, before the first render, so every analytics event and the player see the same platform.

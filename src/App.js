@@ -10,6 +10,7 @@ import GTMProvider from 'components/context/GoogleTagManager/GoogleTagManager'
 import AudioPlayerProvider from 'components/context/PlayerContext/AudioPlayerProvider'
 import Header from 'components/common/Header/Header'
 import Footer from 'components/common/Footer/Footer'
+import InstallBanner from 'components/common/InstallBanner/InstallBanner'
 import UpdateToast from 'components/common/UpdateToast/UpdateToast'
 import MiniPlayer from 'components/content/MiniPlayer/MiniPlayer'
 
@@ -17,6 +18,7 @@ const ViewHome = lazy(() => import('components/views/ViewHome'))
 const ViewTv = lazy(() => import('components/views/ViewTv'))
 const ViewRadio = lazy(() => import('components/views/ViewRadio'))
 const ViewDebug = lazy(() => import('components/views/ViewDebug'))
+const ViewInstall = lazy(() => import('components/views/ViewInstall'))
 
 const Shell = styled.div`
   min-height: 100vh;
@@ -53,6 +55,7 @@ export default function App ({ config, platformDetails }) {
             <Helmet defaultTitle={config.brand.name} titleTemplate={`%s · ${config.brand.name}`} />
             <Shell>
               <Header brandName={config.brand.name} />
+              <InstallBanner />
               <Main>
                 <Suspense fallback={<Loading role='status'>Loading...</Loading>}>
                   <Switch>
@@ -60,6 +63,7 @@ export default function App ({ config, platformDetails }) {
                     <Route path='/tv' component={ViewTv} />
                     <Route path='/radio' component={ViewRadio} />
                     <Route path='/debug' component={ViewDebug} />
+                    <Route path='/install' component={ViewInstall} />
                     <Redirect to='/' />
                   </Switch>
                 </Suspense>

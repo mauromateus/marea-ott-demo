@@ -20,7 +20,13 @@ const Inner = styled.div`
   gap: 12px;
 `
 
-const DebugLink = styled(Link)`
+const Links = styled.nav`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`
+
+const FooterLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -41,7 +47,10 @@ export default function Footer ({ brandName, version }) {
     <Bar>
       <Inner>
         <span>{brandName} demo{version ? ` · v${version}` : ''}</span>
-        <DebugLink to='/debug'>Debug</DebugLink>
+        <Links aria-label='Footer'>
+          <FooterLink to='/install'>Install</FooterLink>
+          <FooterLink to='/debug'>Debug</FooterLink>
+        </Links>
       </Inner>
     </Bar>
   )

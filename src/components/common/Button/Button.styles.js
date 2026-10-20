@@ -38,3 +38,4 @@ const buttonBase = css`
 
 export const Button = styled.button`${buttonBase}`
 export const ButtonLink = styled(Link)`${buttonBase}`
+export const ButtonAnchor = styled.a`${buttonBase}`

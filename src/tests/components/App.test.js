@@ -94,10 +94,17 @@ describe('App routes', () => {
     expect(views.every((e) => e.ms_platform_origin === 'lg-tv')).toBe(true)
   })
 
-  it('the footer links to /debug', async () => {
+  it('the footer links to /debug and /install', async () => {
     renderApp('/')
     await screen.findByRole('heading', { name: 'Marea TV' })
     expect(screen.getByRole('link', { name: 'Debug' })).toHaveAttribute('href', '/debug')
+    expect(screen.getByRole('link', { name: 'Install' })).toHaveAttribute('href', '/install')
+  })
+
+  it('/install lazy-loads the install page with its QR code', async () => {
+    renderApp('/install')
+    expect(await screen.findByRole('heading', { level: 1, name: /install marea/i })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /qr code/i })).toBeInTheDocument()
   })
 })
 

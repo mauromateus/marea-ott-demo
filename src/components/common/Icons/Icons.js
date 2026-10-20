@@ -15,3 +15,22 @@ export const SpinnerIcon = () => (
     <path d='M12 3a9 9 0 1 0 9 9' opacity='0.9' />
   </svg>
 )
+
+export const InstallIcon = () => (
+  <svg {...base} fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+    <path d='M12 4v11' /><path d='m7.5 11 4.5 4.5 4.5-4.5' /><path d='M5 19h14' />
+  </svg>
+)
+
+// iOS-style share glyph: open box with an arrow leaving it.
+export const ShareIcon = () => (
+  <svg {...base} fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
+    <path d='M12 15V4' /><path d='m8 7.5 4-4 4 4' /><path d='M7 11H6a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1h-1' />
+  </svg>
+)
+
+export const CloseIcon = () => (
+  <svg {...base} fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round'>
+    <path d='M6 6l12 12' /><path d='M18 6 6 18' />
+  </svg>
+)

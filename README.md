@@ -47,6 +47,15 @@ Regenerate the PWA icons with `npm run icons` (script in `scripts/generate-icons
 
 Local secrets for Node scripts live in `.env` (git-ignored, never read by this app). Nothing in the browser bundle uses secrets, and no variable is prefixed `REACT_APP_`.
 
+## Install experience
+
+- Chrome and Edge (desktop), Chrome on Android: an "Install app" button appears in the header (and on `/install`) when the browser says the app is installable.
+- iPhone and iPad Safari cannot be prompted: a dismissible banner explains Share > Add to Home Screen.
+- Both are shown only when the resolved platform is `web`, so never inside the Android app (`android`) or the installed app (`pwa-web`).
+- `/install` has a QR code of the site URL, Copy link, and steps per platform. Set `install.apkUrl` in `public/config/marea.json` to show an Android APK download; leave it empty to hide that section.
+- Events: `ms_event_install_prompt_shown`, `ms_event_install_choice` (`ms_install_outcome`), `ms_event_app_installed`, visible on `/debug`.
+- `beforeinstallprompt` only works on a real Chromium browser over HTTPS or localhost; see [ADR 0005](docs/decisions/0005-install-experience.md) for how to test each device.
+
 ## What you can do in the app
 
 | Route | What |
@@ -55,6 +64,7 @@ Local secrets for Node scripts live in `.env` (git-ignored, never read by this a
 | `/tv` | Live video (Lightning player) in a 16:9 frame |
 | `/radio` | Live audio. Playback continues on other routes through a mini player |
 | `/debug` | What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker, online state, last 20 dataLayer events, "Copy report" button |
+| `/install` | How to install: QR code of the site URL, Copy link, steps for Android, iPhone and desktop, Install app button when available, optional Android APK download |
 
 ## Folder map
 
@@ -76,11 +86,12 @@ src/
       Player/                         Lightning loader, config builder, strategy
       ServiceWorker/cacheRules.js     what the SW may and may not cache
       ServiceWorkerService.js         waiting-worker state for the update toast
+      InstallPromptService.js         captured beforeinstallprompt event, install analytics
   components/
-    common/                 Header, Footer, Logo, LiveBadge, Artwork, Button, UpdateToast...
+    common/                 Header, Footer, Logo, LiveBadge, Artwork, Button, UpdateToast, InstallButton, InstallBanner...
     content/                LiveCard, Rail, MiniPlayer, VideoPlayer, Equalizer
     context/                ThemeContext, AppContext, GoogleTagManager, PlayerContext
-    views/                  ViewHome, ViewTv, ViewRadio, ViewDebug (lazy loaded)
+    views/                  ViewHome, ViewTv, ViewRadio, ViewDebug, ViewInstall (lazy loaded)
   tests/                    mirrors the source paths
 scripts/                    generate-icons, prepare-pages, preview-pages, deploy-pages
 docs/                       decisions (ADRs), PORTING, test-log, assetlinks example
@@ -104,7 +115,8 @@ docs/                       decisions (ADRs), PORTING, test-log, assetlinks exam
 | Digital Asset Links for a TWA | `docs/assetlinks.example.json` |
 | Debug panel | `src/components/views/ViewDebug/` |
 | GitHub Pages subpath | `src/core/Utils/getBasename.js`, `scripts/`, `docs/decisions/0004-github-pages-subpath.md` |
-| Decisions | `docs/decisions/0001..0004` |
+| Install button (Chromium), iOS instructions banner, `/install` page with QR, install analytics events | `src/core/services/InstallPromptService.js`, `src/core/Utils/detectInstallContext.js`, `src/components/common/InstallButton/`, `src/components/common/InstallBanner/`, `src/components/views/ViewInstall/`, `docs/decisions/0005-install-experience.md` |
+| Decisions | `docs/decisions/0001..0005` |
 | Porting guide | `docs/PORTING.md` |
 | Device test table | `docs/test-log.md` |
 

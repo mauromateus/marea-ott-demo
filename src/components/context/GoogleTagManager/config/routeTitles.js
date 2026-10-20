@@ -3,7 +3,9 @@ const ROUTE_TITLES = {
   '/': 'Home',
   '/tv': 'Marea TV',
   '/radio': 'Marea Radio',
-  '/debug': 'Debug'
+  '/debug': 'Debug',
+  '/install': 'Install',
+  '/install': 'Install'
 }
 
 export const getRouteTitle = (pathname) => ROUTE_TITLES[pathname] || 'not-set'

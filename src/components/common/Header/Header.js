@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Link, NavLink } from 'react-router-dom'
 
 import Logo from 'components/common/Logo/Logo'
+import InstallButton from 'components/common/InstallButton/InstallButton'
 
 const Bar = styled.header`
   position: sticky;
@@ -21,9 +22,15 @@ const Inner = styled.div`
   min-height: ${({ theme }) => theme.layout.headerHeight};
   padding: 0 ${({ theme }) => theme.layout.gutter};
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px 16px;
+`
+
+// On narrow phones the button wraps to its own right-aligned row instead of squeezing the nav.
+const Install = styled(InstallButton)`
+  @media (max-width: 599px) { order: 3; margin-left: auto; margin-bottom: 8px; }
 `
 
 const Brand = styled(Link)`
@@ -34,6 +41,7 @@ const Brand = styled(Link)`
 const Nav = styled.nav`
   display: flex;
   gap: 4px;
+  margin-left: auto;
 `
 
 const NavItem = styled(NavLink)`
@@ -64,6 +72,7 @@ export default function Header ({ brandName }) {
           <NavItem to='/tv'>TV</NavItem>
           <NavItem to='/radio'>Radio</NavItem>
         </Nav>
+        <Install compact />
       </Inner>
     </Bar>
   )

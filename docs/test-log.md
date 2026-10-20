@@ -19,6 +19,19 @@ Status values: `pending`, `ok`, `fail`, `n/a`.
 | Samsung Tizen | pending | pending | pending | pending | pending | pending | pending | Older engines: check layout (no `aspect-ratio`, no `inset`) |
 | LG webOS | pending | pending | pending | pending | pending | pending | pending | |
 
+## Install experience checks
+
+Steps for each row are in `docs/decisions/0005-install-experience.md` ("How to test"). `beforeinstallprompt` cannot be simulated, so every row needs a real device or browser on the HTTPS deployment. After each check, open `/debug` and note the install events.
+
+| Check | Device / browser | Status | Notes |
+|---|---|---|---|
+| Android Chrome: "Install app" button | pending | pending | Header button shows, prompt opens, accepting hides it; `/debug` lists `install_prompt_shown`, `install_choice`, `app_installed` |
+| Android Chrome: menu "Install app" | pending | pending | Header button hides after install; `/debug` lists `app_installed` |
+| iPhone Safari: add-to-home-screen banner | pending | pending | Banner shows, Dismiss sticks after reload, no banner once launched from the Home Screen |
+| Desktop Chrome: install button | pending | pending | Header button and address-bar icon; accepted install opens an app window |
+| `/install` QR scan from another device | pending | pending | Opens the site at `/marea-ott-demo/`, not at the origin root |
+| Installed PWA hides the button | pending | pending | No Install button, no iOS banner, `/install` says "Already installed", `/debug` shows `pwa-web` |
+
 ## Expected results
 
 | Shell | Resolved platform | Analytics appName |
