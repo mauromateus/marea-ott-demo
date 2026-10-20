@@ -122,10 +122,12 @@ describe('InstallSheet Chromium variant', () => {
     expect(Storage.getItem(INSTALLED_KEY)).toBe(true)
     first.unmount()
 
+    // A real browser does not offer the install again while the app is installed.
     InstallPromptService.reset()
-    renderChromium()
+    renderWithProviders(<InstallSheet />, { withAudio: false })
     elapse(4000)
     expect(getSheet()).not.toBeInTheDocument()
+    expect(Storage.getItem(INSTALLED_KEY)).toBe(true)
   })
 
   it('does not remember a dismissed browser prompt as a dismissal of the sheet', async () => {
@@ -139,6 +141,34 @@ describe('InstallSheet Chromium variant', () => {
   it('hides for good after appinstalled (install from the browser menu)', () => {
     open()
     act(() => { window.dispatchEvent(new Event('appinstalled')) })
+    expect(getSheet()).not.toBeInTheDocument()
+    expect(Storage.getItem(INSTALLED_KEY)).toBe(true)
+  })
+})
+
+describe('InstallSheet after an uninstall', () => {
+  it('forgets a stale "installed" mark when the browser offers the install again', () => {
+    Storage.setItem(INSTALLED_KEY, true)
+    renderChromium()
+    elapse(4000)
+    expect(getSheet()).toBeInTheDocument()
+    expect(Storage.getItem(INSTALLED_KEY)).toBeNull()
+  })
+
+  it('still honours a recent dismissal when it clears the stale mark', () => {
+    Storage.setItem(INSTALLED_KEY, true)
+    Storage.setItem(DISMISSED_KEY, Date.now())
+    renderChromium()
+    elapse(4000)
+    expect(getSheet()).not.toBeInTheDocument()
+    expect(Storage.getItem(INSTALLED_KEY)).toBeNull()
+  })
+
+  it('keeps the mark while the browser does not offer the install (app still installed)', () => {
+    Storage.setItem(INSTALLED_KEY, true)
+    setDevice({ ua: ANDROID_UA, platform: 'Linux armv8l' })
+    renderWithProviders(<InstallSheet />, { withAudio: false })
+    elapse(5000)
     expect(getSheet()).not.toBeInTheDocument()
     expect(Storage.getItem(INSTALLED_KEY)).toBe(true)
   })

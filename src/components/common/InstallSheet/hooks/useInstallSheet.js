@@ -52,6 +52,14 @@ export default function useInstallSheet () {
     setHidden(true)
   }, [])
 
+  // The browser only offers an install while the app is not installed, so a stale mark means it was uninstalled.
+  useEffect(() => {
+    if (canInstall && Storage.getItem(INSTALL_SHEET_INSTALLED_KEY) === true) {
+      Storage.removeItem(INSTALL_SHEET_INSTALLED_KEY)
+      setHidden(isSnoozed(Storage.getItem(INSTALL_SHEET_DISMISSED_KEY)))
+    }
+  }, [canInstall])
+
   // Installed from the browser menu or the header button instead of the sheet.
   useEffect(() => {
     window.addEventListener('appinstalled', markInstalled)

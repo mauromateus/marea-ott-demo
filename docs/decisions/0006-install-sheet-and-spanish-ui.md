@@ -64,3 +64,11 @@ Real devices on the HTTPS deployment, rows in `docs/test-log.md`. `beforeinstall
 - Start the radio, then check that the sheet sits above the mini player.
 - `/install` on a phone: no QR, one button or one accordion item.
 - Walk every route and look for English.
+
+## Update: detecting an uninstall
+
+The sheet stores a permanent "installed" mark (`marea:install-sheet-installed`) when `appinstalled` fires or the prompt is accepted. A web page cannot be told that the user uninstalled the app, so the mark went stale and hid the sheet forever.
+
+Decision: the browser only fires `beforeinstallprompt` while the app is not installed. When the hook sees an installable app and finds the mark, it clears the mark and keeps any recent "Not now" snooze. The mark is kept while the browser does not offer the install.
+
+Consequences: detection depends on the browser noticing the uninstall. On Windows and macOS, uninstall from `chrome://apps` (right click, Remove) or from the app's own menu. Removing it from the operating system settings can leave Chrome believing it is still installed until Chrome restarts. Covered by tests in `src/tests/components/common/InstallSheet.test.js` ("after an uninstall").
