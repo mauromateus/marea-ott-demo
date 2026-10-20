@@ -18,8 +18,9 @@ const installSection = (rows) => {
  * @param {Array<{at: number, payload: object}>} events - oldest first, as kept by DataLayerService
  * @param {string} [brandName]
  * @param {Array<{label: string, value: string}>} [installRows] - from buildInstallRows; the section is skipped when empty
+ * @param {Array<{label: string, value: string}>} [versionRows] - from buildVersionRows; listed after the service worker line
  */
-export default function formatReport (d, events, brandName = 'Marea', installRows = []) {
+export default function formatReport (d, events, brandName = 'Marea', installRows = [], versionRows = []) {
   const lines = [
     translate('debug.report.title', { name: brandName, date: d.generatedAt }),
     '',
@@ -31,6 +32,7 @@ export default function formatReport (d, events, brandName = 'Marea', installRow
     `${translate('debug.label.launchQuery')}: ${orNone(d.launchQuery)}`,
     `${translate('debug.label.sessionPlatform')}: ${orNone(d.sessionPlatform)}`,
     `${translate('debug.label.serviceWorker')}: ${serviceWorkerLabel(d.serviceWorkerControlling)}`,
+    ...versionRows.map(({ label, value }) => `${label}: ${value}`),
     `${translate('debug.label.online')}: ${yesNo(d.online)}`,
     `${translate('debug.label.url')}: ${d.url}`,
     `${translate('debug.label.viewport')}: ${d.viewport}`,

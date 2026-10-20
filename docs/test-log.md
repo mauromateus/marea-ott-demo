@@ -2,7 +2,7 @@
 
 Test target: https://mauromateus.github.io/marea-ott-demo/ (GitHub Pages project page; browser, installed PWA and iPhone tests only, it cannot be verified as a TWA, see `docs/decisions/0004-github-pages-subpath.md`).
 
-How to fill a row: open the deployed (HTTPS) build inside the shell under test, launching with the right `?ms_platform=` value when the shell injects it (see `docs/decisions/0001-platform-resolver.md`). Press play on `/tv` and `/radio`, then open `/?debug=1` once (debug mode is off by default and `/debug` redirects home otherwise), go to `/debug` from the footer link, press "Copiar informe" and paste the report below the table (or attach it).
+How to fill a row: open the deployed (HTTPS) build inside the shell under test, launching with the right `?ms_platform=` value when the shell injects it (see `docs/decisions/0001-platform-resolver.md`). Press play on `/tv` and `/radio`, then open `/?debug=1` once (debug mode is off by default and `/debug` redirects home otherwise), go to `/debug` from the footer link, press "Copiar informe" and paste the report below the table (or attach it). The report includes the version rows ("Versión en ejecución", "Versión del service worker activo", "Service worker en espera"): record them next to each device result.
 
 Status values: `pending`, `ok`, `fail`, `n/a`.
 

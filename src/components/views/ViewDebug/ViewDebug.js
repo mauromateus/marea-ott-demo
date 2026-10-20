@@ -8,6 +8,7 @@ import { translate } from 'core/Translation'
 import useDiagnostics from './hooks/useDiagnostics'
 import useCopyReport from './hooks/useCopyReport'
 import useInstallState from './hooks/useInstallState'
+import useWorkerVersions from './hooks/useWorkerVersions'
 import InstallStatePanel from './InstallStatePanel'
 import { Actions, Grid, Term, Value } from './ViewDebug.styles'
 import formatReport from './utils/formatReport'
@@ -42,7 +43,8 @@ export default function ViewDebug () {
   const { config } = useAppContext()
   const { diagnostics: d, events } = useDiagnostics()
   const installRows = useInstallState()
-  const report = formatReport(d, events, config.brand.name, installRows)
+  const versionRows = useWorkerVersions()
+  const report = formatReport(d, events, config.brand.name, installRows, versionRows)
   const { reportRef, copy, message } = useCopyReport(report)
 
   const rows = [
@@ -53,6 +55,7 @@ export default function ViewDebug () {
     [translate('debug.label.launchQuery'), orNone(d.launchQuery)],
     [translate('debug.label.sessionPlatform'), orNone(d.sessionPlatform)],
     [translate('debug.label.serviceWorker'), serviceWorkerLabel(d.serviceWorkerControlling)],
+    ...versionRows.map(({ label, value }) => [label, value]),
     [translate('debug.label.online'), yesNo(d.online)],
     [translate('debug.label.userAgent'), d.userAgent]
   ]

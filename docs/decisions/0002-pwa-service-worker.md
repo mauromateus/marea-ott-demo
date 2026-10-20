@@ -38,6 +38,16 @@ Decision: the version identity is the hashed main bundle name (`main.d0945250.js
 
 Tradeoff: a tab that keeps running old JS while a new worker activates can request old lazy chunks that no longer exist. That is why a differing version still asks the user, and why the silent path is limited to identical bundles.
 
+## Version rows in diagnostics
+
+Context: testers keep asking which version they are looking at and which one the service worker holds while checking updates.
+
+Decision: the "Diagnóstico" section of `/debug` (debug mode only, read-only) has three rows, repeated in "Copiar informe" after the service worker line. "Versión en ejecución" is the main bundle of the running page. "Versión del service worker activo" is what the active worker answers to `GET_VERSION` (`src/core/services/ServiceWorker/queryWorkerVersion.js`, 2 s timeout), or "sin respuesta" (no active worker, an old worker without the handler, or no answer in time) or "sin service worker" (none registered or no browser support). "Service worker en espera" says "Sí" or "No".
+
+How to read them: equal bundle names mean the page and the worker are in sync. A "Sí" in the waiting row means a new version is pending: it activates after the update toast is accepted, or silently when its bundle equals the page's. Different names with "No" waiting usually mean the page was loaded before the worker took control: reload. In a development build there is no worker, so the rows say "sin service worker".
+
+Limit: the rows are read when the page opens and again when the worker takes control; reload the page to see a worker that installed later.
+
 ## Consequences
 
 - Offline, the shell and config load, but live streams do not (by design).

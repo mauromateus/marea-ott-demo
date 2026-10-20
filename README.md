@@ -91,7 +91,7 @@ To add a language (for example `en` or `pt`):
 | `/` | Inicio: Marea TV live card, Marea Radio live card, Swiper rails of sample content |
 | `/tv` | Live video (Lightning player) in a 16:9 frame |
 | `/radio` | Live audio. Playback continues on other routes through a mini player |
-| `/debug` | Hidden unless debug mode is on (open `/?debug=1` once; `?debug=0` turns it off; otherwise it redirects to `/`). Diagnóstico. What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker, online state, last 20 dataLayer events, "Copiar informe" button |
+| `/debug` | Hidden unless debug mode is on (open `/?debug=1` once; `?debug=0` turns it off; otherwise it redirects to `/`). Diagnóstico. What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker (controlling, running and active versions, update waiting), online state, last 20 dataLayer events, "Copiar informe" button |
 | `/install` | How to install: status chip, Instalar app button when available, steps for the detected platform on phones, QR code with Copiar enlace and tabs (Android, iPhone, Computador) on wide screens, optional Android APK download |
 
 ## Folder map
