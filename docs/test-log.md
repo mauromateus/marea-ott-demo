@@ -26,17 +26,26 @@ Steps for each row are in `docs/decisions/0005-install-experience.md` and `docs/
 | Check | Device / browser | Status | Notes |
 |---|---|---|---|
 | Android Chrome: "Instalar app" header button | pending | pending | Header button is visible in the first row at 360px, prompt opens, accepting hides it; `/debug` lists `install_prompt_shown`, `install_choice`, `app_installed` |
-| Android Chrome: install sheet | pending | pending | Sheet slides up after 4 s or the first scroll; "Instalar" opens the prompt; "Ahora no" hides it for 7 days; `/debug` lists `install_sheet_shown` and `install_sheet_dismissed` |
+| Android Chrome: install sheet | pending | pending | Sheet slides up after 4 s or the first scroll; "Instalar" opens the prompt; "Ahora no" hides it according to the reappearance policy (demo: until the next load); `/debug` lists `install_sheet_shown` and `install_sheet_dismissed` |
 | Android Chrome: menu "Install app" | pending | pending | Header button hides after install; `/debug` lists `app_installed` |
-| iPhone Safari: install sheet with steps and arrow | pending | pending | Sheet shows after 4 s or the first scroll, two steps, bouncing arrow; "Ahora no" sticks after reload; no sheet once launched from the Home Screen; no arrow on iPad |
+| iPhone Safari: install sheet with steps and arrow | pending | pending | Sheet shows after 4 s or the first scroll, two steps, bouncing arrow; "Ahora no" hides it until the next load in the demo (everyLoad); no sheet once launched from the Home Screen; no arrow on iPad |
 | Desktop Chrome: install button | pending | pending | Header button and address-bar icon; accepted install opens an app window |
 | `/install` QR scan from another device | pending | pending | Opens the site at `/marea-ott-demo/`, not at the origin root |
 | Installed PWA hides the install UI | pending | pending | No install button, no sheet, `/install` says "Ya está instalada", `/debug` shows `pwa-web` |
+| `everyLoad`: reload shows the card again | pending | pending | Demo config. Close the card, reload: it comes back after 4 s or the first scroll |
+| `everyLoad`: closing hides it until the next load | pending | pending | Close with "Ahora no" and with the X; it stays hidden while navigating; local and session storage have no install-sheet keys |
+| `everyLoad`: an old 7 day snooze is ignored | pending | pending | Set `marea:install-sheet-dismissed-at` to now in local storage, reload: the card still shows |
+| `session`: closing hides it for the tab session | pending | pending | Set `install.sheet.reappear` to `session`. Close, reload: hidden; new tab or cleared session storage: shown |
+| `days:3`: closing hides it for 3 days | pending | pending | Close, reload: hidden. Move the dismissed-at timestamp 4 days back, reload: shown |
+| `progressive`: 1st, 2nd and 3rd close | pending | pending | 1st: hidden for the session. 2nd (new session): 3 days. 3rd (after moving the timestamp back): 14 days; `marea:install-sheet-dismiss-count` increments |
+| Invalid `reappear` value falls back to `session` | pending | pending | Try `days:0` and `weekly`: closing behaves as `session`; `/debug` row "Reaparición de la tarjeta" says "Una vez por sesión" |
+| `/debug` shows the active policy and card state | pending | pending | Row "Reaparición de la tarjeta" matches the config; "Cerrada en esta sesión" after a session close; "Pospuesta hasta ..." only for `days` and `progressive` |
+| `ms_install_reappear` on the dismissed event | pending | pending | `/debug` events list `ms_event_install_sheet_dismissed` with the active mode name |
 | Install sheet sits above the mini player | pending | pending | Start the radio, go to Inicio: the sheet is above the mini player and nothing overlaps, also with the iPhone home indicator |
 | `/install` on a phone is not saturated | pending | pending | No QR, one title, one line, the big button or one accordion item with at most 3 short steps |
 | Whole UI in Spanish | pending | pending | Walk Inicio, TV, Radio, Instalar, Diagnóstico, the update toast and the error states: no English visible (the player's own controls excepted) |
 
-The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, 7 day snooze, installed mark, or no browser offer) and is read-only: a stale platform heals itself on the next load. When an install check does not show the button or the sheet, open `/?debug=1`, read that section first and paste the report.
+The "Estado de instalación" section of `/debug` explains why the install UI is hidden (platform stored in the tab, snooze or closed session, the active reappearance policy, installed mark, or no browser offer) and is read-only: a stale platform heals itself on the next load. When an install check does not show the button or the sheet, open `/?debug=1`, read that section first and paste the report.
 
 ## Update and offline checks
 

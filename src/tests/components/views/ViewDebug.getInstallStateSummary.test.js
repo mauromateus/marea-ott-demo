@@ -1,9 +1,10 @@
 import getInstallStateSummary from 'components/views/ViewDebug/utils/getInstallStateSummary'
-import { SNOOZE_MS } from 'components/common/InstallSheet/utils/isSnoozed'
+import { DAY_MS, parseReappear } from 'components/common/InstallSheet/utils/reappearPolicy'
 
 describe('getInstallStateSummary', () => {
   const now = Date.UTC(2026, 0, 15, 12)
-  const ready = { canInstall: true, platform: 'web', storedPlatform: '', dismissedAt: undefined, installedMark: false, now }
+  const days7 = parseReappear('days:7')
+  const ready = { canInstall: true, platform: 'web', storedPlatform: '', dismissedAt: undefined, installedMark: false, policy: days7, now }
 
   it('is available when the browser offered the install and nothing hides the card', () => {
     expect(getInstallStateSummary(ready)).toEqual({ code: 'available', params: {} })
@@ -15,11 +16,11 @@ describe('getInstallStateSummary', () => {
 
   it('reports a snooze with the moment it ends', () => {
     const dismissedAt = now - 1000
-    expect(getInstallStateSummary({ ...ready, dismissedAt })).toEqual({ code: 'snoozed', params: { until: dismissedAt + SNOOZE_MS } })
+    expect(getInstallStateSummary({ ...ready, dismissedAt })).toEqual({ code: 'snoozed', params: { until: dismissedAt + 7 * DAY_MS } })
   })
 
   it('ignores an expired, future or corrupt dismissal', () => {
-    ;[now - SNOOZE_MS, now + 5000, 'yesterday', null].forEach((dismissedAt) => {
+    ;[now - 7 * DAY_MS, now + 5000, 'yesterday', null].forEach((dismissedAt) => {
       expect(getInstallStateSummary({ ...ready, dismissedAt }).code).toBe('available')
     })
   })
@@ -49,7 +50,7 @@ describe('getInstallStateSummary', () => {
   })
 
   describe('precedence when several causes apply', () => {
-    const everything = { canInstall: false, platform: 'android', storedPlatform: 'android', dismissedAt: now - 1, installedMark: true, quietRoute: true, now }
+    const everything = { canInstall: false, platform: 'android', storedPlatform: 'android', dismissedAt: now - 1, installedMark: true, quietRoute: true, policy: days7, now }
 
     it('platform beats every other cause', () => {
       expect(getInstallStateSummary(everything).code).toBe('hidden-platform')
@@ -69,6 +70,48 @@ describe('getInstallStateSummary', () => {
   })
 
   it('defaults now to the current time', () => {
-    expect(getInstallStateSummary({ canInstall: true, platform: 'web', dismissedAt: Date.now() - 1000 }).code).toBe('snoozed')
+    expect(getInstallStateSummary({ canInstall: true, platform: 'web', policy: days7, dismissedAt: Date.now() - 1000 }).code).toBe('snoozed')
+  })
+  describe('by reappearance policy', () => {
+    const base = { ...ready, dismissedAt: now - 1000 }
+    const policy = (value) => parseReappear(value)
+
+    it('everyLoad never reports a snooze or a closed session, whatever is stored', () => {
+      const stored = { ...base, dismissCount: 3, sessionDismissed: true, policy: policy('everyLoad') }
+      expect(getInstallStateSummary(stored)).toEqual({ code: 'available', params: {} })
+      expect(getInstallStateSummary({ ...stored, canInstall: false }).code).toBe('no-offer')
+    })
+
+    it('session reports "closed in this session" and ignores a legacy timestamp', () => {
+      const session = { ...ready, policy: policy('session') }
+      expect(getInstallStateSummary({ ...session, sessionDismissed: true })).toEqual({ code: 'closed-session', params: {} })
+      expect(getInstallStateSummary({ ...session, dismissedAt: now - 1000 }).code).toBe('available')
+    })
+
+    it('days reports the snooze until N days after the close, never "closed in this session"', () => {
+      const days3 = { ...base, policy: policy('days:3'), sessionDismissed: true }
+      expect(getInstallStateSummary(days3)).toEqual({ code: 'snoozed', params: { until: now - 1000 + 3 * DAY_MS } })
+      expect(getInstallStateSummary({ ...days3, dismissedAt: now - 3 * DAY_MS }).code).toBe('available')
+    })
+
+    it('progressive: first close is the session, then 3 days, then 14 days', () => {
+      const progressive = { ...base, policy: policy('progressive') }
+      expect(getInstallStateSummary({ ...progressive, dismissCount: 1, sessionDismissed: true }).code).toBe('closed-session')
+      expect(getInstallStateSummary({ ...progressive, dismissCount: 1 }).code).toBe('available')
+      expect(getInstallStateSummary({ ...progressive, dismissCount: 2 })).toEqual({ code: 'snoozed', params: { until: now - 1000 + 3 * DAY_MS } })
+      expect(getInstallStateSummary({ ...progressive, dismissCount: 5 })).toEqual({ code: 'snoozed', params: { until: now - 1000 + 14 * DAY_MS } })
+    })
+
+    it('an invalid or missing policy behaves as session', () => {
+      expect(getInstallStateSummary({ ...ready, policy: undefined, sessionDismissed: true }).code).toBe('closed-session')
+      expect(getInstallStateSummary({ ...ready, policy: undefined, dismissedAt: now - 1000 }).code).toBe('available')
+    })
+
+    it('"closed in this session" sits where the snooze does: after the installed mark, before no offer and the route', () => {
+      const closed = { canInstall: false, platform: 'web', policy: policy('session'), sessionDismissed: true, quietRoute: true, now }
+      expect(getInstallStateSummary({ ...closed, installedMark: true }).code).toBe('hidden-installed')
+      expect(getInstallStateSummary(closed).code).toBe('closed-session')
+      expect(getInstallStateSummary({ ...closed, platform: 'android' }).code).toBe('hidden-platform')
+    })
   })
 })

@@ -32,11 +32,18 @@ export default {
   'debug.install.label.storedPlatform': 'Plataforma guardada en esta pestaña',
   'debug.install.label.card': 'Tarjeta de instalación',
   'debug.install.label.installedMark': 'Marca de instalada guardada',
+  'debug.install.label.reappear': 'Reaparición de la tarjeta',
   'debug.install.storedPlatformNone': 'ninguna',
   'debug.install.card.available': 'Disponible',
+  'debug.install.card.closedSession': 'Cerrada en esta sesión',
   'debug.install.card.snoozed': 'Pospuesta hasta {until}',
   'debug.install.card.hiddenInstalled': 'Oculta: marcada como instalada',
   'debug.install.card.hiddenPlatform': 'Oculta: la plataforma no es web',
   'debug.install.card.hiddenRoute': 'Oculta en esta ruta',
-  'debug.install.card.noOffer': 'Sin oferta del navegador'
+  'debug.install.card.noOffer': 'Sin oferta del navegador',
+  'debug.install.reappear.everyLoad': 'Cada carga',
+  'debug.install.reappear.session': 'Una vez por sesión',
+  'debug.install.reappear.days': 'Cada {days} días',
+  'debug.install.reappear.day': 'Cada día',
+  'debug.install.reappear.progressive': 'Progresiva'
 }

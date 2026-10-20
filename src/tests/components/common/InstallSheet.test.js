@@ -7,7 +7,7 @@ import InstallPromptService from 'core/services/InstallPromptService'
 import DataLayerService from 'core/services/DataLayerService'
 import Storage from 'core/Storage'
 import { audioStatusAtom } from 'components/context/PlayerContext/atoms/playerAtoms'
-import renderWithProviders from '../../utils/renderWithProviders'
+import renderWithProviders, { withReappear } from '../../utils/renderWithProviders'
 
 const IPHONE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1'
 const IPAD_UA = 'Mozilla/5.0 (iPad; CPU OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
@@ -16,6 +16,8 @@ const ANDROID_UA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 
 const DISMISSED_KEY = 'marea:install-sheet-dismissed-at'
 const INSTALLED_KEY = 'marea:install-sheet-installed'
 const DAY = 24 * 60 * 60 * 1000
+// The reappearance policies themselves are covered in InstallSheet.reappear.test.js.
+const SEVEN_DAYS = { config: withReappear('days:7') }
 
 const setDevice = ({ ua, platform, touch = 5, standalone = false }) => {
   jest.spyOn(window.navigator, 'userAgent', 'get').mockReturnValue(ua)
@@ -158,7 +160,7 @@ describe('InstallSheet after an uninstall', () => {
   it('still honours a recent dismissal when it clears the stale mark', () => {
     Storage.setItem(INSTALLED_KEY, true)
     Storage.setItem(DISMISSED_KEY, Date.now())
-    renderChromium()
+    renderChromium(SEVEN_DAYS)
     elapse(4000)
     expect(getSheet()).not.toBeInTheDocument()
     expect(Storage.getItem(INSTALLED_KEY)).toBeNull()
@@ -174,9 +176,9 @@ describe('InstallSheet after an uninstall', () => {
   })
 })
 
-describe('InstallSheet dismissal', () => {
+describe('InstallSheet dismissal with days:7', () => {
   it.each(['Ahora no', 'Cerrar'])('"%s" hides it and stores a timestamp through the Storage wrapper', (name) => {
-    renderChromium()
+    renderChromium(SEVEN_DAYS)
     elapse(4000)
     const before = Date.now()
     fireEvent.click(screen.getByRole('button', { name }))
@@ -186,21 +188,21 @@ describe('InstallSheet dismissal', () => {
 
   it('stays away for 7 days and comes back after that', () => {
     Storage.setItem(DISMISSED_KEY, Date.now() - 6 * DAY)
-    const first = renderChromium()
+    const first = renderChromium(SEVEN_DAYS)
     elapse(4000)
     expect(getSheet()).not.toBeInTheDocument()
     first.unmount()
 
     InstallPromptService.reset()
     Storage.setItem(DISMISSED_KEY, Date.now() - 8 * DAY)
-    renderChromium()
+    renderChromium(SEVEN_DAYS)
     elapse(4000)
     expect(getSheet()).toBeInTheDocument()
   })
 
   it('ignores a corrupt or future timestamp', () => {
     Storage.setItem(DISMISSED_KEY, Date.now() + 30 * DAY)
-    renderChromium()
+    renderChromium(SEVEN_DAYS)
     elapse(4000)
     expect(getSheet()).toBeInTheDocument()
   })
@@ -241,9 +243,9 @@ describe('InstallSheet gating', () => {
 })
 
 describe('InstallSheet iOS variant', () => {
-  const openIos = (device) => {
+  const openIos = (device, options = {}) => {
     setDevice(device)
-    renderWithProviders(<InstallSheet />, { withAudio: false })
+    renderWithProviders(<InstallSheet />, { withAudio: false, ...options })
     elapse(4000)
   }
 
@@ -277,7 +279,7 @@ describe('InstallSheet iOS variant', () => {
   })
 
   it('can be dismissed and remembers it', () => {
-    openIos({ ua: IPHONE_UA, platform: 'iPhone' })
+    openIos({ ua: IPHONE_UA, platform: 'iPhone' }, SEVEN_DAYS)
     fireEvent.click(screen.getByRole('button', { name: 'Ahora no' }))
     expect(getSheet()).not.toBeInTheDocument()
     expect(typeof Storage.getItem(DISMISSED_KEY)).toBe('number')
@@ -297,7 +299,7 @@ describe('InstallSheet analytics', () => {
     elapse(4000)
     fireEvent.click(screen.getByRole('button', { name: 'Ahora no' }))
     expect(sheetEvents().map((e) => e.event)).toEqual(['ms_event_install_sheet_shown', 'ms_event_install_sheet_dismissed'])
-    expect(sheetEvents()[1]).toMatchObject({ ms_install_variant: 'chromium', ms_platform_origin: 'web' })
+    expect(sheetEvents()[1]).toMatchObject({ ms_install_variant: 'chromium', ms_install_reappear: 'everyLoad', ms_platform_origin: 'web' })
   })
 
   it('sends nothing when the sheet is gated', () => {

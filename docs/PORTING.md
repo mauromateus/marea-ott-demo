@@ -83,3 +83,7 @@ Marea's `src/core/Translation.js` mirrors the real product's `translate(key, par
 - `src/tests/i18n/dictionary.test.js` scans the source for referenced keys and fails when one is missing from the dictionary. It is the cheapest guard against a user seeing `install.sheet.title` on screen.
 - Marea reads `app.language` from the OTT config and sets `document.documentElement.lang` at boot; the real product should do the same per client.
 - The analytics `ms_page_title` values follow the UI language in Marea. Decide with analytics whether the real product keeps one language for reporting.
+
+## 7. Install sheet reappearance policy
+
+The demo's install sheet reads how it comes back after a close from the OTT config (`install.sheet.reappear`: `everyLoad`, `session`, `days:N` or `progressive`; see ADR 0006, "Reappearance policy"). In the real product this must be configurable per client in the remote JSON config, next to the rest of the per-client settings, with `session` as the fallback when the value is missing or invalid. Port `src/components/common/InstallSheet/utils/reappearPolicy.js` and its tests as they are (pure, no dependencies), and the `ms_install_reappear` parameter of the dismissed event. Storage goes through the `Session` and `Storage` wrappers; `everyLoad` must store nothing.

@@ -1,15 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { useAppContext } from 'components/context/AppContext/AppContext'
 import useInstallPrompt from 'components/common/InstallButton/hooks/useInstallPrompt'
 import { trackInstallSheetShown, trackInstallSheetDismissed } from 'components/context/GoogleTagManager/utils/trackInstall'
+import Session from 'core/Session'
 import Storage from 'core/Storage'
 import { canShowInstallUi, readInstallContext, shouldShowIosInstructions } from 'core/Utils/detectInstallContext'
-import isSnoozed from '../utils/isSnoozed'
+import { getDismissalWrites, isHiddenByPolicy, parseReappear } from '../utils/reappearPolicy'
 
 export const INSTALL_SHEET_DELAY_MS = 4000
 export const INSTALL_SHEET_DISMISSED_KEY = 'marea:install-sheet-dismissed-at'
+export const INSTALL_SHEET_DISMISS_COUNT_KEY = 'marea:install-sheet-dismiss-count'
+export const INSTALL_SHEET_SESSION_KEY = 'marea:install-sheet-dismissed-session'
 export const INSTALL_SHEET_INSTALLED_KEY = 'marea:install-sheet-installed'
 
 // The page already explains installing in full; /debug is a diagnostics tool.
@@ -17,20 +20,33 @@ const QUIET_ROUTES = ['/install', '/debug']
 
 export const isQuietRoute = (pathname) => QUIET_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`))
 
-const isHiddenByStorage = () => Storage.getItem(INSTALL_SHEET_INSTALLED_KEY) === true || isSnoozed(Storage.getItem(INSTALL_SHEET_DISMISSED_KEY))
+export const readDismissalState = () => ({
+  dismissedAt: Storage.getItem(INSTALL_SHEET_DISMISSED_KEY),
+  dismissCount: Storage.getItem(INSTALL_SHEET_DISMISS_COUNT_KEY),
+  sessionDismissed: Session.getItem(INSTALL_SHEET_SESSION_KEY) === true
+})
+
+const isHiddenByPolicyInStorage = (policy) => isHiddenByPolicy({ policy, ...readDismissalState(), now: Date.now() })
+
+const isHiddenByStorage = (policy) => Storage.getItem(INSTALL_SHEET_INSTALLED_KEY) === true || isHiddenByPolicyInStorage(policy)
 
 /**
  * Decides when the install sheet shows: 4 s after load or on the first scroll (whichever is first),
- * only where install makes sense, and not again for 7 days after a dismissal or ever after an install.
+ * only where install makes sense, never again after an install, and after a close according to the
+ * reappearance policy of the config (install.sheet.reappear, see utils/reappearPolicy).
  */
 export default function useInstallSheet () {
-  const { platform } = useAppContext()
+  const { platform, config } = useAppContext()
+  const reappear = config?.install?.sheet?.reappear
+  const policy = useMemo(() => parseReappear(reappear), [reappear])
   const { pathname } = useLocation()
   const { canInstall, promptInstall } = useInstallPrompt()
   const [context] = useState(readInstallContext)
   const [armed, setArmed] = useState(false)
-  const [hidden, setHidden] = useState(isHiddenByStorage)
+  const [hidden, setHidden] = useState(() => isHiddenByStorage(policy))
   const shownTracked = useRef(false)
+  // everyLoad keeps no storage, so the close of this page view must survive the stale mark healing below.
+  const closedThisView = useRef(false)
 
   const variant = context.isIos ? 'ios' : 'chromium'
   // iOS cannot be prompted, so its sheet only needs the right device; Chromium needs the captured event.
@@ -56,9 +72,9 @@ export default function useInstallSheet () {
   useEffect(() => {
     if (canInstall && Storage.getItem(INSTALL_SHEET_INSTALLED_KEY) === true) {
       Storage.removeItem(INSTALL_SHEET_INSTALLED_KEY)
-      setHidden(isSnoozed(Storage.getItem(INSTALL_SHEET_DISMISSED_KEY)))
+      setHidden(closedThisView.current || isHiddenByPolicyInStorage(policy))
     }
-  }, [canInstall])
+  }, [canInstall, policy])
 
   // Installed from the browser menu or the header button instead of the sheet.
   useEffect(() => {
@@ -74,10 +90,24 @@ export default function useInstallSheet () {
   }, [visible, variant])
 
   const dismiss = useCallback(() => {
-    Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, Date.now())
+    const { sessionDismissed, dismissedAt, dismissCount } = getDismissalWrites({
+      policy,
+      dismissCount: Storage.getItem(INSTALL_SHEET_DISMISS_COUNT_KEY),
+      now: Date.now()
+    })
+    if (sessionDismissed) {
+      Session.setItem(INSTALL_SHEET_SESSION_KEY, true)
+    }
+    if (dismissedAt !== undefined) {
+      Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, dismissedAt)
+    }
+    if (dismissCount !== undefined) {
+      Storage.setItem(INSTALL_SHEET_DISMISS_COUNT_KEY, dismissCount)
+    }
+    closedThisView.current = true
     setHidden(true)
-    trackInstallSheetDismissed(variant)
-  }, [variant])
+    trackInstallSheetDismissed(variant, policy.mode)
+  }, [variant, policy])
 
   const install = useCallback(async () => {
     const outcome = await promptInstall()

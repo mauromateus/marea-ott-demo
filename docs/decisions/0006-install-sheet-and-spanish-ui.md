@@ -16,7 +16,7 @@ Three problems showed up after ADR 0005:
 - Variant by device (`readInstallContext`): Chromium shows the app icon, "Instala Marea", one line, a large "Instalar" button (calls the existing `InstallPromptService.promptInstall()`) and a quiet "Ahora no". iOS shows the same card with two steps ("Toca Compartir" with an inline share icon, "Elige Agregar a pantalla de inicio"). A bouncing arrow points down only on iPhone, because Safari's share button is in the bottom toolbar there; iPad (including the desktop-class iPadOS user agent) has no arrow.
 - Timing: it appears 4 seconds after load or on the first scroll, whichever comes first (`useInstallSheet`). Chromium also needs `canInstall` (the captured `beforeinstallprompt`); iOS needs iOS Safari that is not standalone.
 - Gating: only when the resolved platform is `web`. Never on `/install` or `/debug`, never in the Android shell (`android`) or the installed app (`pwa-web`).
-- Dismissal ("Ahora no" or the close icon) stores a timestamp under `marea:install-sheet-dismissed-at` through the `Storage` wrapper and hides the sheet for 7 days (`isSnoozed`; a future or corrupt timestamp does not hide it). An accepted install, or `appinstalled`, stores `marea:install-sheet-installed` and hides it for good. A dismissed browser prompt is not a dismissal of the sheet.
+- Dismissal ("Ahora no" or the close icon) stores a timestamp under `marea:install-sheet-dismissed-at` through the `Storage` wrapper and hides the sheet for 7 days (`isSnoozed`; a future or corrupt timestamp does not hide it). Superseded: the reappearance is now configurable, see "Reappearance policy" below. An accepted install, or `appinstalled`, stores `marea:install-sheet-installed` and hides it for good. A dismissed browser prompt is not a dismissal of the sheet.
 - Mini player: `useMiniPlayerVisible` is the single source for "is the mini player on screen" (audio status not idle and not on `/radio`). When true, the sheet sits above it using the shared `MINI_PLAYER_CLEARANCE`, which the update toast uses too. Everything respects `env(safe-area-inset-bottom)`.
 - Motion: a pulse on the primary button for two cycles, then it stops; the arrow bounces for six cycles, then stops. All of it is disabled under `prefers-reduced-motion` (on top of the global rule in `ThemeContext`).
 - Header button: a coral filled pill with an icon and "Instalar app", two gentle pulses. On phones the header keeps the logo and the button in the first row and moves the nav to its own row, so the button is never wrapped away.
@@ -92,3 +92,45 @@ Update: `/debug` is hidden from clients. Debug mode is off by default and mirror
 - Read-only diagnostics: install behavior is unchanged.
 - Tests: `getInstallStateSummary` (every branch and the precedence), the panel states (including a stale platform healed on load) and the report, in `src/tests/components/views/ViewDebug.*.test.js`; debug mode in `src/tests/core/Utils/debugMode.test.js`, `src/tests/components/common/hooks/useDebugMode.test.js`, `DebugGate.test.js` and `Footer.test.js`. Real layout and the real `beforeinstallprompt` are not covered by jsdom.
 
+## Reappearance policy
+
+Closing the sheet ("Ahora no" or the X) used to hide it for a fixed 7 days. A demo shown to prospects needs the opposite (the card on every load, so it is never missing in a live walkthrough), while a real client wants it far less invasive. The policy is now per client, read from the config (`install.sheet.reappear` in `public/config/marea.json`, through `AppContext` like the rest of the config).
+
+### Modes
+
+| Value | Closing hides the sheet | Storage |
+|---|---|---|
+| `everyLoad` | for the rest of that page view only | none (component state) |
+| `session` | for the tab session | `Session`, key `marea:install-sheet-dismissed-session` |
+| `days:N` (positive integer, for example `days:3`) | for N days | `Storage`, key `marea:install-sheet-dismissed-at` (timestamp) |
+| `progressive` | 1st close: the rest of the session. 2nd close: 3 days. 3rd close and later: 14 days | `Storage`: `marea:install-sheet-dismiss-count` and the dismissed-at key |
+
+- Defaults: the demo config sets `everyLoad` explicitly. A missing, empty or invalid value (`days:0`, `days:-2`, `days:abc`, an unknown word, a non string) falls back to `session`, the safe default for a real client. Case and surrounding whitespace are ignored (`" EveryLoad "` works).
+- Progressive steps are named constants in `utils/reappearPolicy.js` (`PROGRESSIVE_SECOND_DAYS = 3`, `PROGRESSIVE_LATER_DAYS = 14`). The count lives in `localStorage` so it survives sessions; a corrupt count is read as "never closed".
+- Everything else is unchanged: 4 seconds or first scroll, quiet routes (`/install`, `/debug`), platform gating, the installed mark and its self-heal, an accepted install hides it for good, and the iOS variant follows the same policy.
+
+### Rationale
+
+Invasiveness against visibility. Every load maximizes installs but nags returning users; a session or a few days is polite but can leave a prospect without the card. The header "Instalar app" pill and `/install` stay visible regardless of the policy, so a user who closed the card can always install.
+
+### Design
+
+- `utils/reappearPolicy.js` is pure: `parseReappear(value)`, `isHiddenByPolicy({ policy, dismissedAt, dismissCount, sessionDismissed, now })`, `getHiddenState` (the same decision with the reason and the end of a snooze, used by `/debug`) and `getDismissalWrites` (what a close must store in each mode). `useInstallSheet` only reads the storage, calls these and writes.
+- A future or non numeric timestamp never hides the sheet (same rule as before). `isSnoozed` and the fixed `SNOOZE_MS` were removed.
+- Analytics: `ms_event_install_sheet_dismissed` gets `ms_install_reappear` with the active mode name (`everyLoad`, `session`, `days`, `progressive`). Fallbacks report `session`.
+- `/debug` (debug mode only): a new row "Reaparición de la tarjeta" (Cada carga, Una vez por sesión, Cada N días, Progresiva), also in the copy report. The card state has a new code, `closed-session` ("Cerrada en esta sesión"); "Pospuesta hasta ..." only appears for `days` and `progressive`; `everyLoad` never reports a snooze or a closed card, because it stores nothing (the close of a page view is invisible to the debug page).
+
+### Migration
+
+Old versions stored a 7 day timestamp under `marea:install-sheet-dismissed-at`. In `everyLoad` and `session` that value is ignored (and never rewritten), so users stuck behind the old snooze see the card again. `progressive` ignores it until the second close; `days:N` still reads it with its own N, which is the intended continuity. Nothing is deleted.
+
+### How to test each mode
+
+Unit tests cover every mode; the real behavior needs a browser (see `docs/test-log.md`). Change `install.sheet.reappear` in the deployed `config/marea.json` (or the dev server's), then:
+
+- `everyLoad`: open the page, wait 4 seconds, close the card. It stays away while you navigate. Reload: it comes back after 4 seconds. Local and session storage hold nothing from the sheet.
+- `session`: close, reload (hidden), open a new tab or clear session storage (shown again).
+- `days:3`: close, reload (hidden). To skip time, set `marea:install-sheet-dismissed-at` in local storage to a timestamp 4 days ago and reload.
+- `progressive`: close once (hidden for the session, shown in a new session); close a second time (hidden for 3 days); set the dismissed-at key 4 days back, reload, close a third time (14 days).
+- Invalid value (for example `days:0`): behaves as `session`.
+- `/?debug=1`, then `/debug`: the "Reaparición de la tarjeta" row shows the active policy.

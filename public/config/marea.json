@@ -20,7 +20,10 @@
     "gtmId": ""
   },
   "install": {
-    "apkUrl": ""
+    "apkUrl": "",
+    "sheet": {
+      "reappear": "everyLoad"
+    }
   },
   "analytics": {
     "appName": "marea-web",

@@ -52,13 +52,22 @@ Local secrets for Node scripts live in `.env` (git-ignored, never read by this a
 ## Install experience
 
 - An install sheet slides up from the bottom 4 seconds after load or on the first scroll. Chromium (Chrome and Edge on desktop, Chrome on Android) gets a large "Instalar" button; iPhone and iPad Safari get two steps (Compartir, Agregar a pantalla de inicio), with a bouncing arrow on iPhone only.
-- "Ahora no" or the close icon hides the sheet for 7 days (a timestamp in `localStorage` through the `Storage` wrapper); an accepted install hides it for good. It sits above the mini player and respects the safe area.
+- "Ahora no" or the close icon hides the sheet according to `install.sheet.reappear` (table below); an accepted install hides it for good. The demo config uses `everyLoad`. It sits above the mini player and respects the safe area.
 - The header also has an "Instalar app" pill (visible in the first row at 360px), and `/install` has the same button.
 - All of it is shown only when the resolved platform is `web`, so never inside the Android app (`android`) or the installed app (`pwa-web`), and the sheet never shows on `/install` or `/debug`.
 - `/install` is built for phones: short title, one-line lead, status chip, then the install button or only the steps for the detected platform (no QR on phones). Wide screens get the QR tile with Copiar enlace and tabs Android, iPhone and Computador. Set `install.apkUrl` in `public/config/marea.json` to show an Android APK download; leave it empty to hide that section.
-- `/debug` has a read-only "Estado de instalación" section that explains why the install UI may be hidden (stored platform in the tab, 7 day snooze, installed mark, no browser offer). There is no reset button: a stale platform heals itself on the next load; see [ADR 0001](docs/decisions/0001-platform-resolver.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md).
+- `/debug` has a read-only "Estado de instalación" section that explains why the install UI may be hidden (stored platform in the tab, snooze or closed session, the active reappearance policy, installed mark, no browser offer). There is no reset button: a stale platform heals itself on the next load; see [ADR 0001](docs/decisions/0001-platform-resolver.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md).
 - Events: `ms_event_install_prompt_shown`, `ms_event_install_choice` (`ms_install_outcome`), `ms_event_app_installed`, `ms_event_install_sheet_shown`, `ms_event_install_sheet_dismissed`, visible on `/debug`.
 - `beforeinstallprompt` only works on a real Chromium browser over HTTPS or localhost; see [ADR 0005](docs/decisions/0005-install-experience.md) and [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md) for how to test each device.
+
+- `install.sheet.reappear` in `public/config/marea.json` sets when the sheet comes back after a close. Missing or invalid values fall back to `session`. Details in [ADR 0006](docs/decisions/0006-install-sheet-and-spanish-ui.md) ("Reappearance policy"). The header pill and `/install` stay available whatever the value.
+
+| Value | Closing hides the sheet |
+|---|---|
+| `everyLoad` (demo) | until the next page load; nothing is stored |
+| `session` (fallback) | for the tab session (`sessionStorage`) |
+| `days:N` (for example `days:3`) | for N days (`localStorage` timestamp) |
+| `progressive` | 1st close: the session. 2nd close: 3 days. 3rd and later: 14 days |
 
 ## Languages
 

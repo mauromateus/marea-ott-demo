@@ -11,6 +11,9 @@ import marea from '../../../public/config/marea.json'
 
 export const config = marea
 
+/** The demo config with a different install sheet reappearance policy (`install.sheet.reappear`). */
+export const withReappear = (reappear, base = config) => ({ ...base, install: { ...base.install, sheet: { reappear } } })
+
 export default function renderWithProviders (ui, { route = '/', platform = 'web', store = createStore(), withAudio = true, config: appConfig = config } = {}) {
   const content = withAudio ? <AudioPlayerProvider>{ui}</AudioPlayerProvider> : ui
 

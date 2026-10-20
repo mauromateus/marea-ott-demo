@@ -7,9 +7,14 @@ import InstallPromptService from 'core/services/InstallPromptService'
 import Session from 'core/Session'
 import Storage from 'core/Storage'
 import { PLATFORM_SESSION_KEY, initPlatformOrigin, resetPlatformOrigin } from 'core/Utils/getPlatformOrigin'
-import { INSTALL_SHEET_DISMISSED_KEY, INSTALL_SHEET_INSTALLED_KEY } from 'components/common/InstallSheet/hooks/useInstallSheet'
-import { SNOOZE_MS } from 'components/common/InstallSheet/utils/isSnoozed'
-import renderWithProviders from '../../utils/renderWithProviders'
+import {
+  INSTALL_SHEET_DISMISS_COUNT_KEY,
+  INSTALL_SHEET_DISMISSED_KEY,
+  INSTALL_SHEET_INSTALLED_KEY,
+  INSTALL_SHEET_SESSION_KEY
+} from 'components/common/InstallSheet/hooks/useInstallSheet'
+import { DAY_MS } from 'components/common/InstallSheet/utils/reappearPolicy'
+import renderWithProviders, { withReappear } from '../../utils/renderWithProviders'
 
 const fireBeforeInstallPrompt = () => {
   const event = new Event('beforeinstallprompt', { cancelable: true })
@@ -73,9 +78,68 @@ describe('install state panel rows', () => {
   it('shows the snooze with the local date and time it ends', () => {
     const dismissedAt = Date.now() - 1000
     Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, dismissedAt)
+    renderDebug({ route: '/', config: withReappear('days:3') })
+    fireBeforeInstallPrompt()
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent(`Pospuesta hasta ${new Date(dismissedAt + 3 * DAY_MS).toLocaleString('es')}`)
+  })
+
+  it('says the card was closed in this session when the policy is session', () => {
+    Session.setItem(INSTALL_SHEET_SESSION_KEY, true)
+    renderDebug({ config: withReappear('session') })
+    fireBeforeInstallPrompt()
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Cerrada en esta sesión')
+  })
+
+  it('never reports a snooze in everyLoad, even with an old timestamp stored', () => {
+    Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, Date.now() - 1000)
+    Session.setItem(INSTALL_SHEET_SESSION_KEY, true)
     renderDebug()
     fireBeforeInstallPrompt()
-    expect(valueOf('Tarjeta de instalación')).toHaveTextContent(`Pospuesta hasta ${new Date(dismissedAt + SNOOZE_MS).toLocaleString('es')}`)
+    expect(valueOf('Tarjeta de instalación')).not.toHaveTextContent(/Pospuesta|Cerrada/)
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Oculta en esta ruta')
+  })
+
+  it('reports progressive steps: closed in the session after the first close, a snooze after the second', () => {
+    Storage.setItem(INSTALL_SHEET_DISMISS_COUNT_KEY, 1)
+    Session.setItem(INSTALL_SHEET_SESSION_KEY, true)
+    const first = renderDebug({ config: withReappear('progressive') })
+    fireBeforeInstallPrompt()
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent('Cerrada en esta sesión')
+    first.unmount()
+
+    const dismissedAt = Date.now() - 1000
+    Storage.setItem(INSTALL_SHEET_DISMISS_COUNT_KEY, 2)
+    Storage.setItem(INSTALL_SHEET_DISMISSED_KEY, dismissedAt)
+    renderDebug({ config: withReappear('progressive') })
+    fireBeforeInstallPrompt()
+    expect(valueOf('Tarjeta de instalación')).toHaveTextContent(`Pospuesta hasta ${new Date(dismissedAt + 3 * DAY_MS).toLocaleString('es')}`)
+  })
+
+  describe('policy row', () => {
+    it.each([
+      ['everyLoad', 'Cada carga'],
+      ['session', 'Una vez por sesión'],
+      ['days:3', 'Cada 3 días'],
+      ['days:1', 'Cada día'],
+      ['progressive', 'Progresiva'],
+      ['days:0', 'Una vez por sesión'],
+      ['', 'Una vez por sesión']
+    ])('shows %j as "%s"', (reappear, text) => {
+      renderDebug({ config: withReappear(reappear) })
+      expect(valueOf('Reaparición de la tarjeta')).toHaveTextContent(text)
+    })
+
+    it('reads the demo config: every load', () => {
+      renderDebug()
+      expect(valueOf('Reaparición de la tarjeta')).toHaveTextContent('Cada carga')
+    })
+
+    it('sits right after the card row', () => {
+      renderDebug()
+      const text = panel().textContent
+      expect(text.indexOf('Tarjeta de instalación')).toBeLessThan(text.indexOf('Reaparición de la tarjeta'))
+      expect(text.indexOf('Reaparición de la tarjeta')).toBeLessThan(text.indexOf('Marca de instalada guardada'))
+    })
   })
 
   it('shows the installed mark and that it hides the card', () => {
@@ -132,6 +196,11 @@ describe('copy report', () => {
     expect(text).not.toContain('restablezcas')
     expect(text).toContain('Tarjeta de instalación: Oculta: la plataforma no es web')
     expect(text).toContain('Marca de instalada guardada: Sí')
+  })
+
+  it('includes the reappearance policy', () => {
+    renderDebug({ config: withReappear('days:3') })
+    expect(reportText()).toContain('Reaparición de la tarjeta: Cada 3 días')
   })
 
   it('keeps the events section after the install rows', () => {
