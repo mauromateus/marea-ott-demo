@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.js": "/marea-ott-demo/static/js/main.f3be5c14.js",
+    "static/css/857.ad4a5eac.chunk.css": "/marea-ott-demo/static/css/857.ad4a5eac.chunk.css",
+    "static/js/857.41d1caa4.chunk.js": "/marea-ott-demo/static/js/857.41d1caa4.chunk.js",
+    "static/js/232.888d389d.chunk.js": "/marea-ott-demo/static/js/232.888d389d.chunk.js",
+    "static/js/167.3332d710.chunk.js": "/marea-ott-demo/static/js/167.3332d710.chunk.js",
+    "static/js/982.f39fb253.chunk.js": "/marea-ott-demo/static/js/982.f39fb253.chunk.js",
+    "static/js/458.2ff40758.chunk.js": "/marea-ott-demo/static/js/458.2ff40758.chunk.js",
+    "static/js/826.35e23de6.chunk.js": "/marea-ott-demo/static/js/826.35e23de6.chunk.js",
+    "static/js/21.ac0f7696.chunk.js": "/marea-ott-demo/static/js/21.ac0f7696.chunk.js",
+    "service-worker.js": "/marea-ott-demo/service-worker.js",
+    "index.html": "/marea-ott-demo/index.html"
+  },
+  "entrypoints": [
+    "static/js/main.f3be5c14.js"
+  ]
+}

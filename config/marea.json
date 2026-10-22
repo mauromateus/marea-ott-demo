@@ -1,0 +1,470 @@
+{
+  "brand": {
+    "name": "Marea",
+    "tagline": "Segundo cambio de prueba: se actualiza sin subir nada a la tienda.",
+    "colors": {
+      "background": "#0B1220",
+      "surface": "#121B2E",
+      "surfaceAlt": "#1A2740",
+      "border": "#26344F",
+      "text": "#E8EEF7",
+      "textMuted": "#93A1B8",
+      "accent": "#2EC4B6",
+      "live": "#FF6B4A"
+    }
+  },
+  "app": {
+    "ottName": "Marea",
+    "version": "0.1.0",
+    "language": "es",
+    "gtmId": ""
+  },
+  "install": {
+    "apkUrl": "",
+    "sheet": {
+      "reappear": "everyLoad"
+    }
+  },
+  "analytics": {
+    "appName": "marea-web",
+    "referrerSignal": true,
+    "appNames": {
+      "web": "marea-web",
+      "pwa-web": "marea-pwa-web",
+      "android": "marea-pwa-android",
+      "android-tv": "marea-android-tv",
+      "fire-tv": "marea-fire-tv",
+      "samsung-tv": "marea-samsung-tv",
+      "lg-tv": "marea-lg-tv",
+      "ios": "marea-pwa-ios"
+    }
+  },
+  "players": {
+    "video": {
+      "type": "live",
+      "id": "6a7a2c26686671c2378f0ef5",
+      "title": "Marea TV",
+      "description": "En vivo desde la costa, las 24 horas."
+    },
+    "audio": {
+      "type": "live",
+      "id": "66a851c67891bc6f032fd771",
+      "title": "Marea Radio",
+      "description": "Música y voces del mar, en vivo."
+    }
+  },
+  "rails": [
+    {
+      "id": "new",
+      "title": "Novedades en Marea",
+      "sample": true,
+      "items": [
+        {
+          "id": "new-1",
+          "title": "Línea de sal",
+          "meta": "Documental · 48 min",
+          "sample": true,
+          "artwork": {
+            "from": "#134E5E",
+            "to": "#2EC4B6",
+            "angle": 120,
+            "glyph": "waves"
+          }
+        },
+        {
+          "id": "new-2",
+          "title": "El último ferri",
+          "meta": "Drama · 1 h 32 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1B2A49",
+            "to": "#4C6EF5",
+            "angle": 157,
+            "glyph": "rings"
+          }
+        },
+        {
+          "id": "new-3",
+          "title": "Algas y humo",
+          "meta": "Gastronomía · 26 min",
+          "sample": true,
+          "artwork": {
+            "from": "#3A1C71",
+            "to": "#FF6B4A",
+            "angle": 194,
+            "glyph": "peaks"
+          }
+        },
+        {
+          "id": "new-4",
+          "title": "Luces del puerto",
+          "meta": "Serie · 8 episodios",
+          "sample": true,
+          "artwork": {
+            "from": "#0F4C5C",
+            "to": "#E36414",
+            "angle": 141,
+            "glyph": "dots"
+          }
+        },
+        {
+          "id": "new-5",
+          "title": "Diarios de la marea baja",
+          "meta": "Documental · 52 min",
+          "sample": true,
+          "artwork": {
+            "from": "#14213D",
+            "to": "#2EC4B6",
+            "angle": 178,
+            "glyph": "lines"
+          }
+        },
+        {
+          "id": "new-6",
+          "title": "Barquitos de papel",
+          "meta": "Familiar · 1 h 18 min",
+          "sample": true,
+          "artwork": {
+            "from": "#5F0F40",
+            "to": "#FF6B4A",
+            "angle": 125,
+            "glyph": "sun"
+          }
+        },
+        {
+          "id": "new-7",
+          "title": "Oleaje del norte",
+          "meta": "Deportes · 44 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0B3954",
+            "to": "#BFD7EA",
+            "angle": 162,
+            "glyph": "grid"
+          }
+        },
+        {
+          "id": "new-8",
+          "title": "Agua de cristal",
+          "meta": "Suspenso · 1 h 41 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1D3557",
+            "to": "#F4A261",
+            "angle": 199,
+            "glyph": "arcs"
+          }
+        }
+      ]
+    },
+    {
+      "id": "coastal",
+      "title": "Historias de la costa",
+      "sample": true,
+      "items": [
+        {
+          "id": "coastal-1",
+          "title": "Guardianes de las dunas",
+          "meta": "Documental · 39 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0F4C5C",
+            "to": "#E36414",
+            "angle": 143,
+            "glyph": "peaks"
+          }
+        },
+        {
+          "id": "coastal-2",
+          "title": "Calle del Faro",
+          "meta": "Serie · 10 episodios",
+          "sample": true,
+          "artwork": {
+            "from": "#14213D",
+            "to": "#2EC4B6",
+            "angle": 180,
+            "glyph": "dots"
+          }
+        },
+        {
+          "id": "coastal-3",
+          "title": "Cocina de agua salada",
+          "meta": "Gastronomía · 24 min",
+          "sample": true,
+          "artwork": {
+            "from": "#5F0F40",
+            "to": "#FF6B4A",
+            "angle": 127,
+            "glyph": "lines"
+          }
+        },
+        {
+          "id": "coastal-4",
+          "title": "La temporada a la deriva",
+          "meta": "Drama · 1 h 27 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0B3954",
+            "to": "#BFD7EA",
+            "angle": 164,
+            "glyph": "sun"
+          }
+        },
+        {
+          "id": "coastal-5",
+          "title": "Cabo de los Ecos",
+          "meta": "Misterio · 1 h 36 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1D3557",
+            "to": "#F4A261",
+            "angle": 201,
+            "glyph": "grid"
+          }
+        },
+        {
+          "id": "coastal-6",
+          "title": "Club de las pozas",
+          "meta": "Infantil · 12 min",
+          "sample": true,
+          "artwork": {
+            "from": "#134E5E",
+            "to": "#2EC4B6",
+            "angle": 148,
+            "glyph": "arcs"
+          }
+        },
+        {
+          "id": "coastal-7",
+          "title": "Señales en la niebla",
+          "meta": "Documental · 57 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1B2A49",
+            "to": "#4C6EF5",
+            "angle": 185,
+            "glyph": "waves"
+          }
+        },
+        {
+          "id": "coastal-8",
+          "title": "Camino de conchas",
+          "meta": "Viajes · 31 min",
+          "sample": true,
+          "artwork": {
+            "from": "#3A1C71",
+            "to": "#FF6B4A",
+            "angle": 132,
+            "glyph": "rings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sound",
+      "title": "Sonidos del mar",
+      "sample": true,
+      "items": [
+        {
+          "id": "sound-1",
+          "title": "Mezcla Marea de medianoche",
+          "meta": "Música · 1 h 02 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0B3954",
+            "to": "#BFD7EA",
+            "angle": 166,
+            "glyph": "lines"
+          }
+        },
+        {
+          "id": "sound-2",
+          "title": "Olas lentas, vol. 2",
+          "meta": "Ambiental · 48 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1D3557",
+            "to": "#F4A261",
+            "angle": 203,
+            "glyph": "sun"
+          }
+        },
+        {
+          "id": "sound-3",
+          "title": "Sesiones del puerto",
+          "meta": "Música en vivo · 55 min",
+          "sample": true,
+          "artwork": {
+            "from": "#134E5E",
+            "to": "#2EC4B6",
+            "angle": 150,
+            "glyph": "grid"
+          }
+        },
+        {
+          "id": "sound-4",
+          "title": "Horas de azul profundo",
+          "meta": "Ambiental · 1 h 10 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1B2A49",
+            "to": "#4C6EF5",
+            "angle": 187,
+            "glyph": "arcs"
+          }
+        },
+        {
+          "id": "sound-5",
+          "title": "Estática de coral",
+          "meta": "Electrónica · 41 min",
+          "sample": true,
+          "artwork": {
+            "from": "#3A1C71",
+            "to": "#FF6B4A",
+            "angle": 134,
+            "glyph": "waves"
+          }
+        },
+        {
+          "id": "sound-6",
+          "title": "Casete del atardecer",
+          "meta": "Pop · 37 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0F4C5C",
+            "to": "#E36414",
+            "angle": 171,
+            "glyph": "rings"
+          }
+        },
+        {
+          "id": "sound-7",
+          "title": "Bahía del Eco en vivo",
+          "meta": "Música en vivo · 1 h 05 min",
+          "sample": true,
+          "artwork": {
+            "from": "#14213D",
+            "to": "#2EC4B6",
+            "angle": 208,
+            "glyph": "peaks"
+          }
+        },
+        {
+          "id": "sound-8",
+          "title": "Orilla a la luz de la luna",
+          "meta": "Acústica · 34 min",
+          "sample": true,
+          "artwork": {
+            "from": "#5F0F40",
+            "to": "#FF6B4A",
+            "angle": 155,
+            "glyph": "dots"
+          }
+        }
+      ]
+    },
+    {
+      "id": "late",
+      "title": "Marea nocturna",
+      "sample": true,
+      "items": [
+        {
+          "id": "late-1",
+          "title": "Después de la tormenta",
+          "meta": "Suspenso · 1 h 29 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1B2A49",
+            "to": "#4C6EF5",
+            "angle": 189,
+            "glyph": "grid"
+          }
+        },
+        {
+          "id": "late-2",
+          "title": "Pescadores de noche",
+          "meta": "Documental · 46 min",
+          "sample": true,
+          "artwork": {
+            "from": "#3A1C71",
+            "to": "#FF6B4A",
+            "angle": 136,
+            "glyph": "arcs"
+          }
+        },
+        {
+          "id": "late-3",
+          "title": "Fósforo",
+          "meta": "Ciencia ficción · 1 h 38 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0F4C5C",
+            "to": "#E36414",
+            "angle": 173,
+            "glyph": "waves"
+          }
+        },
+        {
+          "id": "late-4",
+          "title": "Estela",
+          "meta": "Drama · 1 h 22 min",
+          "sample": true,
+          "artwork": {
+            "from": "#14213D",
+            "to": "#2EC4B6",
+            "angle": 120,
+            "glyph": "rings"
+          }
+        },
+        {
+          "id": "late-5",
+          "title": "Resaca",
+          "meta": "Serie · 6 episodios",
+          "sample": true,
+          "artwork": {
+            "from": "#5F0F40",
+            "to": "#FF6B4A",
+            "angle": 157,
+            "glyph": "peaks"
+          }
+        },
+        {
+          "id": "late-6",
+          "title": "Robo en la hora azul",
+          "meta": "Crimen · 1 h 44 min",
+          "sample": true,
+          "artwork": {
+            "from": "#0B3954",
+            "to": "#BFD7EA",
+            "angle": 194,
+            "glyph": "dots"
+          }
+        },
+        {
+          "id": "late-7",
+          "title": "Ancla silenciosa",
+          "meta": "Misterio · 1 h 19 min",
+          "sample": true,
+          "artwork": {
+            "from": "#1D3557",
+            "to": "#F4A261",
+            "angle": 141,
+            "glyph": "lines"
+          }
+        },
+        {
+          "id": "late-8",
+          "title": "La larga travesía a nado",
+          "meta": "Deportes · 58 min",
+          "sample": true,
+          "artwork": {
+            "from": "#134E5E",
+            "to": "#2EC4B6",
+            "angle": 178,
+            "glyph": "sun"
+          }
+        }
+      ]
+    }
+  ]
+}
