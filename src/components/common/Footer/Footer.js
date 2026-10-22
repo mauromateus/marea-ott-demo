@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import useDebugMode from 'components/common/hooks/useDebugMode'
 import { translate } from 'core/Translation'
+import { getRunningBuildId } from 'core/Utils/getBuildId'
 
 const Bar = styled.footer`
   border-top: 1px solid ${({ theme }) => theme.colors.border};
@@ -47,10 +48,11 @@ Footer.propTypes = {
 
 export default function Footer ({ brandName, version }) {
   const debugMode = useDebugMode()
+  const buildId = getRunningBuildId()
   return (
     <Bar>
       <Inner>
-        <span>{translate('common.footer.demo', { name: brandName })}{version ? ` · v${version}` : ''}</span>
+        <span>{translate('common.footer.demo', { name: brandName })}{version ? ` · v${version}` : ''}{buildId ? ` · ${translate('common.footer.build', { id: buildId })}` : ''}</span>
         <Links aria-label={translate('common.footer.label')}>
           <FooterLink to='/install'>{translate('common.footer.install')}</FooterLink>
           {debugMode && <FooterLink to='/debug'>{translate('common.footer.debug')}</FooterLink>}

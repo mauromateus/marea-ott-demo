@@ -1,4 +1,4 @@
-import { isMediaRequest, shouldRuntimeCache, isNavigationFallback } from 'core/services/ServiceWorker/cacheRules'
+import { isMediaRequest, isConfigRequest, shouldRuntimeCache, isNavigationFallback } from 'core/services/ServiceWorker/cacheRules'
 
 const url = (href) => new URL(href, 'https://marea.test')
 const req = (destination = '') => ({ destination })
@@ -27,10 +27,13 @@ describe('isMediaRequest (never cached, never intercepted)', () => {
 })
 
 describe('shouldRuntimeCache', () => {
-  it('caches same-origin images, fonts and config json', () => {
+  it('caches same-origin images and fonts', () => {
     expect(shouldRuntimeCache({ url: url('/icons/icon-192.png'), request: req('image'), origin: ORIGIN })).toBe(true)
     expect(shouldRuntimeCache({ url: url('/static/media/font.woff2'), request: req('font'), origin: ORIGIN })).toBe(true)
-    expect(shouldRuntimeCache({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN })).toBe(true)
+  })
+
+  it('leaves config json to its own network-first rule', () => {
+    expect(shouldRuntimeCache({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN })).toBe(false)
   })
 
   it('never caches cross-origin requests', () => {
@@ -51,21 +54,47 @@ describe('shouldRuntimeCache', () => {
 describe('base path awareness (GitHub Pages project subpath)', () => {
   const BASE = '/marea-ott-demo'
 
-  it('caches config json under the base path', () => {
-    expect(shouldRuntimeCache({ url: url('/marea-ott-demo/config/marea.json'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(true)
-  })
-
-  it('does not treat a root /config/ path as config when a base path is set', () => {
-    expect(shouldRuntimeCache({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(false)
-  })
-
-  it('defaults to the root when no base path is given', () => {
-    expect(shouldRuntimeCache({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN })).toBe(true)
+  it('caches images under the base path', () => {
+    expect(shouldRuntimeCache({ url: url('/marea-ott-demo/icons/icon-192.png'), request: req('image'), origin: ORIGIN, basePath: BASE })).toBe(true)
   })
 
   it('still never caches media or mdstrm under a base path', () => {
-    expect(shouldRuntimeCache({ url: url('/marea-ott-demo/config/x.m3u8'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(false)
-    expect(shouldRuntimeCache({ url: new URL('https://img.mdstrm.com/marea-ott-demo/config/a.json'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(false)
+    expect(shouldRuntimeCache({ url: url('/marea-ott-demo/config/x.m3u8'), request: req('image'), origin: ORIGIN, basePath: BASE })).toBe(false)
+    expect(shouldRuntimeCache({ url: new URL('https://img.mdstrm.com/marea-ott-demo/config/a.json'), request: req('image'), origin: ORIGIN, basePath: BASE })).toBe(false)
+  })
+})
+
+describe('isConfigRequest (network-first config json)', () => {
+  const BASE = '/marea-ott-demo'
+
+  it('matches config json at the root', () => {
+    expect(isConfigRequest({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN, basePath: '' })).toBe(true)
+  })
+
+  it('defaults to the root when no base path is given', () => {
+    expect(isConfigRequest({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN })).toBe(true)
+  })
+
+  it('matches config json under the base path', () => {
+    expect(isConfigRequest({ url: url('/marea-ott-demo/config/marea.json'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(true)
+  })
+
+  it('does not treat a root /config/ path as config when a base path is set', () => {
+    expect(isConfigRequest({ url: url('/config/marea.json'), request: req(''), origin: ORIGIN, basePath: BASE })).toBe(false)
+  })
+
+  it('ignores other origins', () => {
+    expect(isConfigRequest({ url: new URL('https://other.test/config/marea.json'), request: req(''), origin: ORIGIN, basePath: '' })).toBe(false)
+  })
+
+  it('ignores non-json files and other folders', () => {
+    expect(isConfigRequest({ url: url('/config/marea.txt'), request: req(''), origin: ORIGIN, basePath: '' })).toBe(false)
+    expect(isConfigRequest({ url: url('/api/marea.json'), request: req(''), origin: ORIGIN, basePath: '' })).toBe(false)
+  })
+
+  it('never matches media or mdstrm requests', () => {
+    expect(isConfigRequest({ url: new URL('https://img.mdstrm.com/config/a.json'), request: req(''), origin: 'https://img.mdstrm.com', basePath: '' })).toBe(false)
+    expect(isConfigRequest({ url: url('/config/a.json'), request: req('video'), origin: ORIGIN, basePath: '' })).toBe(false)
   })
 })
 

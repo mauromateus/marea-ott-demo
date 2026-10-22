@@ -14,17 +14,21 @@ export const isMediaRequest = (url, request) => (
   MEDIA_DESTINATIONS.includes(request.destination)
 )
 
-/** Same-origin images, fonts and config JSON only. basePath is the deployment subpath ('' at the root). */
-export const shouldRuntimeCache = ({ url, request, origin, basePath = getBasename() }) => {
+/** Same-origin images and fonts only (config JSON has its own rule below). */
+export const shouldRuntimeCache = ({ url, request, origin }) => {
   if (url.origin !== origin || isMediaRequest(url, request)) {
     return false
   }
-  return (
-    request.destination === 'image' ||
-    request.destination === 'font' ||
-    (url.pathname.startsWith(`${basePath}/config/`) && url.pathname.endsWith('.json'))
-  )
+  return request.destination === 'image' || request.destination === 'font'
 }
+
+/** Same-origin remote config JSON under `${basePath}/config/`, served network-first. basePath is '' at the root. */
+export const isConfigRequest = ({ url, request, origin, basePath = getBasename() }) => (
+  url.origin === origin &&
+  !isMediaRequest(url, request) &&
+  url.pathname.startsWith(`${basePath}/config/`) &&
+  url.pathname.endsWith('.json')
+)
 
 /** Navigations that get the SPA shell: not files (e.g. /.well-known/assetlinks.json) nor reserved `/_` paths. */
 export const isNavigationFallback = ({ url, request, basePath = getBasename() }) => (

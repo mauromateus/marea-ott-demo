@@ -4,15 +4,15 @@ import { clientsClaim } from 'workbox-core'
 import { ExpirationPlugin } from 'workbox-expiration'
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
-import { StaleWhileRevalidate } from 'workbox-strategies'
-import { shouldRuntimeCache, isNavigationFallback } from './core/services/ServiceWorker/cacheRules'
+import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies'
+import { shouldRuntimeCache, isConfigRequest, isNavigationFallback } from './core/services/ServiceWorker/cacheRules'
 import { createNavigationHandler } from './core/services/ServiceWorker/navigationHandler'
 import { PRECACHE_OPTIONS } from './core/services/ServiceWorker/precacheOptions'
 import getMainBundleName from './core/Utils/getMainBundleName'
 
 clientsClaim()
 
-// App shell: every asset emitted by the build, except /config/*.json, which is served stale-while-revalidate below
+// App shell: every asset emitted by the build, except /config/*.json, which is served network-first below
 // so that config edits do not wait for a new service worker.
 // __WB_MANIFEST must appear once: InjectManifest replaces that single injection point.
 const manifest = self.__WB_MANIFEST.filter((entry) => !/\/config\//.test(entry.url))
@@ -31,7 +31,19 @@ registerRoute(
   })
 )
 
-// Same-origin images, fonts and config JSON. Player scripts, HLS/DASH manifests, media segments and
+// Remote config: network first (revalidating past the host's max-age), cached copy offline or after 3 s.
+// Registered before the images/fonts route; isConfigRequest never matches media or mdstrm requests.
+registerRoute(
+  ({ url, request }) => isConfigRequest({ url, request, origin: self.location.origin }),
+  new NetworkFirst({
+    cacheName: 'marea-config',
+    networkTimeoutSeconds: 3,
+    fetchOptions: { cache: 'no-cache' },
+    plugins: [new ExpirationPlugin({ maxEntries: 5 })]
+  })
+)
+
+// Same-origin images and fonts. Player scripts, HLS/DASH manifests, media segments and
 // anything on *.mdstrm.com are excluded by shouldRuntimeCache, and no other route matches them,
 // so the service worker never intercepts them.
 registerRoute(

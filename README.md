@@ -27,6 +27,10 @@ Open `http://localhost:5050`. `localhost` counts as a secure context, so install
 
 With a connection, every reload or visit loads the latest deployed version: the service worker fetches `index.html` from the network first (bypassing the browser HTTP cache, 3 s timeout) and uses the precached copy only offline or on failure. The "nueva versión disponible" toast appears only when a waiting worker carries a different main bundle than the page. See [ADR 0002](docs/decisions/0002-pwa-service-worker.md).
 
+Config edits (`public/config/marea.json`) show on the next open when online: the page fetches it with `cache: 'no-cache'` and the service worker serves it network-first (3 s timeout, cached copy offline). See "Config freshness" in ADR 0002.
+
+The footer shows the running build (`compilación <id>`, the hash of the main bundle), so the installed Android app and the web can be compared without an address bar.
+
 Pass the platform the way a native shell would, by launching with a query parameter: `http://localhost:5050/?ms_platform=android`. On a desktop the value is honored only while the parameter is in the URL (a stored value that contradicts the device is discarded on every load). To see the diagnostics, open `/?debug=1` once, then use the footer link or `/debug`.
 
 ## Deploy to GitHub Pages

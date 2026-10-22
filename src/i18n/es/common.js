@@ -10,6 +10,7 @@ export default {
   'common.brand.home': 'Ir al inicio de {name}',
   'common.footer.label': 'Pie de página',
   'common.footer.demo': 'Demostración de {name}',
+  'common.footer.build': 'compilación {id}',
   'common.footer.install': 'Instalar',
   'common.footer.debug': 'Diagnóstico',
   'common.update.available': 'Hay una nueva versión disponible',

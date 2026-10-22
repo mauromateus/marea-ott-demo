@@ -107,6 +107,22 @@ describe('shipped marea.json content contract', () => {
   })
 })
 
+describe('ConfigService default fetcher', () => {
+  afterEach(() => { delete window.fetch })
+
+  it('revalidates with the server so an edited config never comes from the HTTP cache', async () => {
+    window.fetch = jest.fn(() => okResponse(marea))
+    await new ConfigService().getJson({ hostname: 'localhost' })
+    expect(window.fetch).toHaveBeenCalledWith('/config/marea.json', { cache: 'no-cache' })
+  })
+
+  it('passes only the url to an injected fetcher', async () => {
+    const fetcher = jest.fn(() => okResponse(marea))
+    await new ConfigService({ fetcher }).getJson({ hostname: 'localhost' })
+    expect(fetcher.mock.calls[0]).toEqual(['/config/marea.json'])
+  })
+})
+
 describe('ConfigService.getJson', () => {
   it('loads and stores the config for the hostname', async () => {
     const fetcher = jest.fn(() => okResponse(marea))

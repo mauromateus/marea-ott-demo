@@ -87,3 +87,7 @@ Marea's `src/core/Translation.js` mirrors the real product's `translate(key, par
 ## 7. Install sheet reappearance policy
 
 The demo's install sheet reads how it comes back after a close from the OTT config (`install.sheet.reappear`: `everyLoad`, `session`, `days:N` or `progressive`; see ADR 0006, "Reappearance policy"). In the real product this must be configurable per client in the remote JSON config, next to the rest of the per-client settings, with `session` as the fallback when the value is missing or invalid. Port `src/components/common/InstallSheet/utils/reappearPolicy.js` and its tests as they are (pure, no dependencies), and the `ms_install_reappear` parameter of the dismissed event. Storage goes through the `Session` and `Storage` wrappers; `everyLoad` must store nothing.
+
+## 8. Remote config freshness
+
+The real product loads its config from a remote endpoint. Once a service worker is added, that response needs the same freshness thinking as Marea's `config/marea.json` (ADR 0002, "Config freshness"): do not serve it cache-first or stale-while-revalidate, and do not let the page's fetch be answered by the HTTP cache. Use network-first with a short timeout and a cached fallback for offline, and revalidate (`cache: 'no-cache'`) in the page fetch. Also consider showing the running build id in the footer, since a TWA has no address bar.

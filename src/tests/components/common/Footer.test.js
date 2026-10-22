@@ -8,8 +8,20 @@ import renderWithProviders from '../../utils/renderWithProviders'
 const renderFooter = (route = '/') => renderWithProviders(<Footer brandName='Marea' version='0.1.0' />, { route, withAudio: false })
 
 beforeEach(() => window.sessionStorage.clear())
+afterEach(() => { document.head.innerHTML = '' })
 
 describe('Footer', () => {
+  it('shows the demo name and version, with no build id when the page has no main bundle', () => {
+    renderFooter()
+    expect(screen.getByText('Demostración de Marea · v0.1.0')).toBeInTheDocument()
+  })
+
+  it('appends the running build id after the version', () => {
+    document.head.innerHTML = '<script src="/marea-ott-demo/static/js/main.abc12345.js"></script>'
+    renderFooter()
+    expect(screen.getByText('Demostración de Marea · v0.1.0 · compilación abc12345')).toBeInTheDocument()
+  })
+
   it('always links to the install page', () => {
     renderFooter()
     expect(screen.getByRole('link', { name: 'Instalar' })).toHaveAttribute('href', '/install')

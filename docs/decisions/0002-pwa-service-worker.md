@@ -10,10 +10,10 @@ The goal is an installable web app that can later be wrapped (TWA on Android, sh
 - Service worker through CRA's built-in Workbox **InjectManifest**: `src/service-worker.js`, registered by `src/serviceWorkerRegistration.js` in production only.
   - Precache of the app shell (everything the build emits) except `/config/*.json`.
   - Navigations get the shell from the network first, with the precached `index.html` as fallback (see "Fresh navigations"). Not for URLs that look like files, so `/.well-known/assetlinks.json` is still served by the server.
-  - Runtime cache, StaleWhileRevalidate, for same-origin images, fonts and `/config/*.json`.
+  - Runtime cache, StaleWhileRevalidate, for same-origin images and fonts. `/config/*.json` is network-first (see "Config freshness").
   - **Never cached or intercepted**: anything on `*.mdstrm.com` (including the Lightning script), HLS/DASH manifests, media segments, and requests with `audio`, `video` or `track` destinations. The rules are a pure function (`src/core/services/ServiceWorker/cacheRules.js`) with tests, and no route matches those requests, so the browser goes straight to the network.
   - Update flow: a `SKIP_WAITING` message handler in the worker; `UpdateToast` shows "New version available" with a Refresh button when a worker is waiting and its version differs from the running page (see "Update toast by version"), and reloads after the new worker takes control.
-- Config is excluded from the precache so editing `marea.json` does not wait for a new service worker.
+- Config is excluded from the precache so editing `marea.json` does not wait for a new service worker. It is served network-first (see "Config freshness").
 
 ## Fresh navigations
 
@@ -73,3 +73,34 @@ The first version of "Fresh navigations" did not reach the home page. `precacheA
 Decision: pass `PRECACHE_OPTIONS` (`directoryIndex: null`, `cleanURLs: false`, in `src/core/services/ServiceWorker/precacheOptions.js`) to `precacheAndRoute`, so no navigation is answered by the precache route. Assets and the shell fallback still come from the precache.
 
 Consequences: the unit tests of the handler could not see this, because it lives in Workbox route matching. It was found by reloading the deployed site right after a deploy. A test now pins the options and the wiring, and the real check is a two-version run in a browser (see `docs/test-log.md`).
+
+## Config freshness
+
+### Context
+
+`public/config/marea.json` holds the client-facing content (brand tagline, rails, player ids). GitHub Pages serves every file with `Cache-Control: max-age=600`, and the worker used to serve `/config/*.json` stale-while-revalidate (cache first). So the first load after an edit still showed the old content, and the page's own `fetch` could be answered by the browser HTTP cache for up to 10 minutes.
+
+### Decision
+
+- `ConfigService`: the default fetcher calls `window.fetch(url, { cache: 'no-cache' })`, which revalidates with the server (a 304 when nothing changed). An injected `fetcher` still receives only the url.
+- `isConfigRequest` (`cacheRules.js`, pure, tested at the root and under a subpath): same origin, under `${basePath}/config/`, `.json`, never a media request. `shouldRuntimeCache` no longer matches config; it keeps only same-origin images and fonts.
+- `service-worker.js` registers a Workbox `NetworkFirst` route for it, before the images/fonts route: `cacheName: 'marea-config'`, `networkTimeoutSeconds: 3`, `fetchOptions: { cache: 'no-cache' }` and an `ExpirationPlugin` with `maxEntries: 5`. Offline, or when the network takes more than 3 s, the last cached copy is used.
+- Config stays out of the precache. Player scripts, HLS/DASH manifests, media segments and `*.mdstrm.com` are still never intercepted.
+
+### Consequences
+
+- With a connection, a config edit shows on the next open of the app or the web page, with no new deploy of the shell and no waiting for a worker update.
+- Offline still opens with the last config that was fetched. A device that never loaded the config online has none.
+- Every open costs one conditional request for the config (usually a 304).
+- Whether the browser honors `fetchOptions` for these requests cannot be proven in unit tests; it needs a real browser.
+
+### How to test
+
+- `npm test -- --watchAll=false src/tests/core/services`.
+- Production build served over HTTPS (or `localhost`): open the page, edit `brand.tagline` in the served `config/marea.json`, reload. The new tagline must show on the first reload. In DevTools > Network, `marea.json` shows 200 or 304 and Cache Storage lists `marea-config`.
+- Offline: Network > Offline, reload: the app opens with the last config.
+- Installed Android app: edit, deploy, open the app. The tagline must change on the first open.
+
+## Footer build id
+
+The footer appends `· compilación <id>` after the version (for example `Demostración de Marea · v0.1.0 · compilación 75f0989a`). The id is the hash of the running main bundle (`main.<hash>.js`), read from the page's script tags by `getRunningBuildId` (`src/core/Utils/getBuildId.js`). Why: the Android shell has no address bar, so `/debug` cannot be opened there, and the footer is the only place to compare the app's build with the web's. It is omitted when there is no hashed main script (dev server, tests).

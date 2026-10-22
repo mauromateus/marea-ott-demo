@@ -56,6 +56,9 @@ Steps are in `docs/decisions/0002-pwa-service-worker.md` ("How to test"). They n
 | Reload after a deploy shows the new version without tapping a toast | pending | pending | Network panel: `index.html` is 200 or 304; a deep link to a route added in the new version opens it |
 | Offline reload still opens the app | pending | pending | DevTools > Network > Offline, reload: the precached shell loads (live streams do not, by design) |
 | No toast right after a fresh reload | pending | pending | The toast appears only when a waiting worker's main bundle differs from the page's |
+| Config edit appears on the first open of the installed Android app and on the web | pending | pending | Edit `brand.tagline`, deploy, open the app and the web page once: the new tagline shows with no second reload (ADR 0002, "Config freshness") |
+| Footer build id equals in the app and the web after a deploy | pending | pending | Footer reads `compilación <id>`; the id must match in the installed app and the browser |
+| Offline still opens with the last config | pending | pending | Open online once, go offline, reopen: the app shows the last config |
 
 ## Expected results
 

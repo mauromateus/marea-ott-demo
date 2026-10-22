@@ -30,7 +30,9 @@ export const validateConfig = (config) => {
 export class ConfigService {
   constructor ({ fetcher, hostnameMap } = {}) {
     this.config = null
-    this.fetcher = fetcher || ((url) => window.fetch(url))
+    // Only the default fetcher adds the option; an injected one receives just the url.
+    // no-cache revalidates with the server (cheap 304s) so config edits show up despite the host's max-age.
+    this.fetcher = fetcher || ((url) => window.fetch(url, { cache: 'no-cache' }))
     this.hostnameMap = hostnameMap || HOSTNAME_CONFIG_MAP
   }
 
