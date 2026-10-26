@@ -10,6 +10,12 @@ const ROUTE_TITLE_KEYS = {
   '/install': 'install.pageTitle'
 }
 
-export const getRouteTitle = (pathname) => (ROUTE_TITLE_KEYS[pathname] ? translate(ROUTE_TITLE_KEYS[pathname]) : 'not-set')
+export const getRouteTitle = (pathname) => {
+  if (ROUTE_TITLE_KEYS[pathname]) {
+    return translate(ROUTE_TITLE_KEYS[pathname])
+  }
+  // /ver/<media id>: one title for every on-demand page, the id is already in `page`.
+  return pathname.startsWith('/ver/') ? translate('vod.pageTitle') : 'not-set'
+}
 
 export default ROUTE_TITLE_KEYS

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import { Link } from 'react-router-dom'
 import SwiperCore, { Keyboard, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/swiper.min.css'
@@ -46,7 +47,7 @@ const Track = styled.div`
   }
 `
 
-const CardButton = styled.button`
+const cardStyles = css`
   display: block;
   width: 100%;
   padding: 0;
@@ -59,6 +60,14 @@ const CardButton = styled.button`
     box-shadow: ${({ theme }) => theme.shadows.glow};
     transform: translateY(-3px);
   }
+`
+
+// Sample cards only explain themselves (button); real medias open their viewing page (link).
+const CardButton = styled.button`${cardStyles}`
+const CardLink = styled(Link)`
+  ${cardStyles}
+  color: inherit;
+  text-decoration: none;
 `
 
 const Poster = styled.div`
@@ -127,13 +136,9 @@ export default function Rail ({ rail }) {
           keyboard={{ enabled: true }}
           a11y={a11y}
         >
-          {rail.items.map((item, index) => (
-            <SwiperSlide key={item.id}>
-              <CardButton
-                type='button'
-                onFocus={() => handleFocus(index)}
-                onClick={() => setNotice(translate(item.thumbnail ? 'home.rail.vodNotice' : 'home.rail.exampleNotice', { title: item.title }))}
-              >
+          {rail.items.map((item, index) => {
+            const card = (
+              <>
                 <Poster>
                   {item.thumbnail
                     ? (
@@ -147,9 +152,25 @@ export default function Rail ({ rail }) {
                   <strong>{item.title}</strong>
                   <span>{item.meta}</span>
                 </Meta>
-              </CardButton>
-            </SwiperSlide>
-          ))}
+              </>
+            )
+
+            return (
+              <SwiperSlide key={item.id}>
+                {item.thumbnail
+                  ? <CardLink to={`/ver/${item.id}`} onFocus={() => handleFocus(index)}>{card}</CardLink>
+                  : (
+                    <CardButton
+                      type='button'
+                      onFocus={() => handleFocus(index)}
+                      onClick={() => setNotice(translate('home.rail.exampleNotice', { title: item.title }))}
+                    >
+                      {card}
+                    </CardButton>
+                    )}
+              </SwiperSlide>
+            )
+          })}
         </Swiper>
       </Track>
     </Section>

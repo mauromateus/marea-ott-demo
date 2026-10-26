@@ -11,7 +11,8 @@ import { stripBasename } from 'core/Utils/getBasename'
 
 export const VIDEO_CONTAINER_ID = 'marea-video-player'
 
-export default function useLiveVideoPlayer () {
+// Plays the live TV signal by default, or any other media of the account when `media` is given ({ id, type: 'media', title }).
+export default function useVideoPlayer ({ media: requestedMedia } = {}) {
   const { config, npaw } = useAppContext()
   const { trackPlayerReady, trackPlayerTime } = useGoogleTagManager()
   const setActiveSource = useSetAtom(activeSourceAtom)
@@ -20,7 +21,8 @@ export default function useLiveVideoPlayer () {
   const [status, setStatus] = useState('loading')
   const [attempt, setAttempt] = useState(0)
   const handleRef = useRef(null)
-  const media = config.players.video
+  const media = requestedMedia || config.players.video
+  const isLive = (media.type || 'live') === 'live'
   const ottName = config.app.ottName
 
   // Latest values for the long-lived player callbacks.
@@ -78,7 +80,7 @@ export default function useLiveVideoPlayer () {
       handleRef.current = null
       if (handle) handle.strategy.destroy()
     }
-  }, [attempt, setActiveSource, setVideoPlaying])
+  }, [attempt, media.id, setActiveSource, setVideoPlaying])
 
   useEffect(() => {
     if (activeSource === 'audio' && isVideoPlaying) {
@@ -88,5 +90,5 @@ export default function useLiveVideoPlayer () {
 
   const retry = useCallback(() => setAttempt((n) => n + 1), [])
 
-  return useMemo(() => ({ status, retry, containerId: VIDEO_CONTAINER_ID }), [status, retry])
+  return useMemo(() => ({ status, retry, isLive, containerId: VIDEO_CONTAINER_ID }), [status, retry, isLive])
 }

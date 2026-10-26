@@ -18,6 +18,7 @@ import { translate } from 'core/Translation'
 
 const ViewHome = lazy(() => import('components/views/ViewHome'))
 const ViewTv = lazy(() => import('components/views/ViewTv'))
+const ViewVod = lazy(() => import('components/views/ViewVod'))
 const ViewRadio = lazy(() => import('components/views/ViewRadio'))
 const ViewDebug = lazy(() => import('components/views/ViewDebug'))
 const ViewInstall = lazy(() => import('components/views/ViewInstall'))
@@ -62,6 +63,7 @@ export default function App ({ config, platformDetails }) {
                   <Switch>
                     <Route exact path='/' component={ViewHome} />
                     <Route path='/tv' component={ViewTv} />
+                    <Route path='/ver/:id' component={ViewVod} />
                     <Route path='/radio' component={ViewRadio} />
                     <Route path='/debug'><DebugGate><ViewDebug /></DebugGate></Route>
                     <Route path='/install' component={ViewInstall} />

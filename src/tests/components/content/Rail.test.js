@@ -35,12 +35,13 @@ describe('Rail with real VOD medias', () => {
     container.querySelectorAll('img').forEach((img) => expect(img).toHaveAttribute('alt', ''))
   })
 
-  it('does not call real medias "example content" when clicked', () => {
+  it('links every real card to its viewing page', () => {
     renderWithProviders(<Rail rail={vodRail} />, { withAudio: false })
-    fireEvent.click(screen.getAllByRole('button')[0])
-    const notice = screen.getByRole('status')
-    expect(notice).toHaveTextContent('Documental: Naturaleza Salvaje')
-    expect(notice).not.toHaveTextContent(/ejemplo/i)
+    const links = screen.getAllByRole('link')
+    expect(links).toHaveLength(2)
+    expect(links[0]).toHaveAttribute('href', '/ver/m1')
+    expect(links[1]).toHaveAttribute('href', '/ver/m2')
+    expect(links[0]).toHaveTextContent('Documental: Naturaleza Salvaje')
   })
 })
 
@@ -48,6 +49,7 @@ describe('Rail with sample artwork', () => {
   it('still renders gradient artwork and the example notice', () => {
     const { container } = renderWithProviders(<Rail rail={sampleRail} />, { withAudio: false })
     expect(container.querySelectorAll('img')).toHaveLength(0)
+    expect(screen.queryAllByRole('link')).toHaveLength(0)
     fireEvent.click(screen.getAllByRole('button')[0])
     expect(screen.getByRole('status')).toHaveTextContent('Línea de sal es contenido de ejemplo')
   })

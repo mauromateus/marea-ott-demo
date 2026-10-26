@@ -62,10 +62,9 @@ describe('key components render Spanish', () => {
     expect(screen.getByRole('link', { name: 'Abrir radio' })).toBeInTheDocument()
   })
 
-  it('Rail card click explains that videos cannot be played yet', () => {
+  it('Rail cards are links named after the video', () => {
     renderWithProviders(<Rail rail={config.rails[0]} />, { withAudio: false })
-    fireEvent.click(screen.getAllByRole('button')[0])
-    expect(screen.getByRole('status')).toHaveTextContent(`${config.rails[0].items[0].title}: en esta demostración todavía no se pueden reproducir los videos a pedido.`)
+    expect(screen.getAllByRole('link')[0]).toHaveTextContent(config.rails[0].items[0].title)
   })
 
   it('MiniPlayer labels and buttons', () => {
@@ -121,6 +120,7 @@ describe('analytics page titles are Spanish, event names stay English', () => {
     expect(getRouteTitle('/')).toBe('Inicio')
     expect(getRouteTitle('/tv')).toBe('Marea TV')
     expect(getRouteTitle('/radio')).toBe('Marea Radio')
+    expect(getRouteTitle('/ver/6a01ed2be3cffd5907cc6473')).toBe('Video a pedido')
     expect(getRouteTitle('/debug')).toBe('Diagnóstico')
     expect(getRouteTitle('/install')).toBe('Instalar')
     expect(getRouteTitle('/nope')).toBe('not-set')

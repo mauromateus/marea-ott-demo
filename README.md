@@ -93,6 +93,7 @@ To add a language (for example `en` or `pt`):
 | Route | What |
 |---|---|
 | `/` | Inicio: Marea TV live card, Marea Radio live card, Swiper rails of real VOD thumbnails |
+| `/ver/:id` | Plays one VOD media of the rails (id from `config.rails[].items[].id`); unknown ids go back to `/` |
 | `/tv` | Live video (Lightning player) in a 16:9 frame |
 | `/radio` | Live audio. Playback continues on other routes through a mini player |
 | `/debug` | Hidden unless debug mode is on (open `/?debug=1` once; `?debug=0` turns it off; otherwise it redirects to `/`). Diagnóstico. What this device reports: platform, analytics appName, display mode, referrer, user agent, service worker (controlling, running and active versions, update waiting), online state, last 20 dataLayer events, "Copiar informe" button |
@@ -162,7 +163,7 @@ docs/                       decisions (ADRs), PORTING, test-log, assetlinks exam
 - The Lightning SDK allows one player per page, so starting TV stops the radio and the other way round. The UI reflects this (mini player shows Reproducir, TV shows "Reanudar TV").
 - Autoplay of the TV on `/tv` is blocked by browsers until the user interacts; the player then shows its own play button.
 - On iOS, audio may need a second tap because the SDK loads asynchronously after the first tap. Not verified on a device.
-- Rail cards show real thumbnails but are not playable yet: a click shows a notice. Most of the selected medias have access restrictions, so playback from the Pages domain still has to be tested.
+- Rail cards open `/ver/<media id>`, which plays the media with the same Lightning player (`type: 'media'`). The account's test medias carry a pre-roll ad, so playback starts after it. One media (`69b9e978ee43afb9190d791e`, "Documental: Naturaleza Salvaje") answers 403 from the platform on every endpoint, so its page shows an empty player; it is an account-side restriction, not an app bug.
 - Rails are filled by `node scripts/sync-media.js` (ids in `scripts/media-selection.json`, token from the local `.env`, never published). Only id, title, duration and thumbnail url reach the config. Cards support two shapes: `thumbnail` (real media) and `artwork` + `"sample": true` (gradient placeholder with the "Contenido de ejemplo" note).
 - Live media ids live only in `public/config/marea.json`.
 - `docs/assetlinks.example.json` is a template with placeholder package name and fingerprint. The real file must be served by the real domain at `/.well-known/assetlinks.json`.

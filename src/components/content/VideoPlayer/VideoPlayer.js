@@ -1,9 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { Button } from 'components/common/Button/Button.styles'
 import { translate } from 'core/Translation'
-import useLiveVideoPlayer from './hooks/useLiveVideoPlayer'
+import useVideoPlayer from './hooks/useVideoPlayer'
 
 // padding-top keeps 16:9 on browsers without the aspect-ratio property (older TV browsers).
 const Frame = styled.div`
@@ -44,17 +45,22 @@ const Overlay = styled.div`
   button { pointer-events: auto; }
 `
 
-export default function VideoPlayer () {
-  const { status, retry, containerId } = useLiveVideoPlayer()
+VideoPlayer.propTypes = {
+  // Omit it to play the live TV signal of the config.
+  media: PropTypes.shape({ id: PropTypes.string.isRequired, type: PropTypes.string, title: PropTypes.string })
+}
+
+export default function VideoPlayer ({ media }) {
+  const { status, retry, isLive, containerId } = useVideoPlayer({ media })
 
   return (
     <Frame>
       <Mount id={containerId} />
-      {status === 'loading' && <Overlay role='status'>{translate('player.loadingLive')}</Overlay>}
+      {status === 'loading' && <Overlay role='status'>{translate(isLive ? 'player.loadingLive' : 'player.loadingVod')}</Overlay>}
       {status === 'evicted' && (
         <Overlay role='status'>
           <span>{translate('player.evicted')}</span>
-          <Button type='button' onClick={retry}>{translate('player.resumeTv')}</Button>
+          <Button type='button' onClick={retry}>{translate(isLive ? 'player.resumeTv' : 'player.resumeVod')}</Button>
         </Overlay>
       )}
       {status === 'error' && (

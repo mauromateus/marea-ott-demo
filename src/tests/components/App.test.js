@@ -57,6 +57,13 @@ describe('App routes', () => {
     expect(container.querySelectorAll('.swiper-wrapper .swiper-slide')).toHaveLength(total)
   })
 
+  it('/ver/:id mounts the on-demand player for a media of the config', async () => {
+    const id = marea.rails[0].items[0].id
+    renderApp(`/ver/${id}`)
+    await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalled())
+    expect(loadPlayerWithAdapter.mock.calls[0][1]).toMatchObject({ id, type: 'media' })
+  })
+
   it('/tv mounts the live video player', async () => {
     const { container } = renderApp('/tv')
     await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalled())

@@ -5,7 +5,7 @@ import es from 'i18n/es'
 import dictionaries from 'i18n'
 
 const SRC = path.resolve(__dirname, '..', '..')
-const AREAS = ['common', 'home', 'tv', 'radio', 'install', 'debug', 'player', 'errors']
+const AREAS = ['common', 'home', 'tv', 'vod', 'radio', 'install', 'debug', 'player', 'errors']
 const KEY_PATTERN = new RegExp(String.raw`['"\x60]((?:${AREAS.join('|')})\.[A-Za-z0-9.]+)['"\x60]`, 'g')
 
 const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {

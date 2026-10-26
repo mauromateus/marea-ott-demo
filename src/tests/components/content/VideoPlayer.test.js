@@ -95,4 +95,55 @@ describe('VideoPlayer', () => {
     await act(async () => resolveLoad({ strategy, player: fakePlayer }))
     expect(strategy.destroy).toHaveBeenCalled()
   })
+
+  describe('with a VOD media', () => {
+    const vod = { id: '6a01ed2be3cffd5907cc6473', type: 'media', title: 'Aragón TV' }
+
+    it('loads that media as on-demand instead of the live signal', async () => {
+      renderWithProviders(<VideoPlayer media={vod} />, { platform: 'ios', route: '/ver/6a01ed2be3cffd5907cc6473' })
+      await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalled())
+      expect(loadedConfig).toMatchObject({ id: vod.id, type: 'media', autoplay: true })
+    })
+
+    it('tracks the content as VOD', async () => {
+      renderWithProviders(<VideoPlayer media={vod} />, { platform: 'ios', route: '/ver/6a01ed2be3cffd5907cc6473' })
+      await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalled())
+      await act(async () => {})
+      act(() => loadedConfig.events.onPlayerReady())
+      expect(JSON.stringify(DataLayerService.getRecentEvents())).toMatch(/"ms_video_type":"VOD"/)
+    })
+
+    it('uses on-demand wording while loading and when evicted', async () => {
+      let evictedCb
+      loadPlayerWithAdapter.mockImplementation((containerId, playerConfig, options) => {
+        loadedConfig = playerConfig
+        evictedCb = options.onEvicted
+        return new Promise(() => {})
+      })
+      renderWithProviders(<VideoPlayer media={vod} />, { route: '/ver/x' })
+      await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalled())
+      expect(screen.getByRole('status')).toHaveTextContent('Cargando el video...')
+      expect(screen.queryByText(/señal en vivo/i)).not.toBeInTheDocument()
+      expect(evictedCb).toBeDefined()
+    })
+
+    it('loads the new media when the id changes', async () => {
+      const other = { id: '69c41c314eda11ddd5b8f3b6', type: 'media', title: 'Uber' }
+      const Harness = () => {
+        const [media, setMedia] = React.useState(vod)
+        return (
+          <>
+            <button type='button' onClick={() => setMedia(other)}>cambiar</button>
+            <VideoPlayer media={media} />
+          </>
+        )
+      }
+      renderWithProviders(<Harness />, { route: '/ver/x' })
+      await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalledTimes(1))
+      fireEvent.click(screen.getByRole('button', { name: 'cambiar' }))
+      await waitFor(() => expect(loadPlayerWithAdapter).toHaveBeenCalledTimes(2))
+      expect(loadedConfig.id).toBe(other.id)
+      expect(strategy.destroy).toHaveBeenCalled()
+    })
+  })
 })
