@@ -92,14 +92,32 @@ describe('shipped marea.json content contract', () => {
     expect(marea.players.audio.id).toBeTruthy()
   })
 
-  it('has 3-4 rails of ~8 cards, all flagged as sample content', () => {
+  it('has 3-4 rails of real medias, each with a title, duration and https thumbnail', () => {
     expect(marea.rails.length).toBeGreaterThanOrEqual(3)
     expect(marea.rails.length).toBeLessThanOrEqual(4)
     marea.rails.forEach((rail) => {
-      expect(rail.sample).toBe(true)
-      expect(rail.items.length).toBe(8)
-      rail.items.forEach((item) => expect(item.sample).toBe(true))
+      expect(rail.sample).toBeUndefined()
+      expect(rail.items.length).toBeGreaterThanOrEqual(3)
+      rail.items.forEach((item) => {
+        expect(item.sample).toBeUndefined()
+        expect(item.id).toMatch(/^[0-9a-f]{24}$/)
+        expect(item.title).toBeTruthy()
+        expect(item.meta).toBeTruthy()
+        expect(item.thumbnail.url).toMatch(/^https:\/\/thumbs\.cdn\.mdstrm\.com\//)
+        expect(item.thumbnail.width).toBeGreaterThan(0)
+        expect(item.thumbnail.height).toBeGreaterThan(0)
+      })
     })
+  })
+
+  it('never repeats a media across rails', () => {
+    const ids = marea.rails.flatMap((rail) => rail.items.map((item) => item.id))
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('keeps only public metadata in the config (no tokens or API fields)', () => {
+    const text = JSON.stringify(marea)
+    expect(text).not.toMatch(/X-API-Token|MS_API_TOKEN|access_rules|access_restrictions/)
   })
 
   it('has GTM disabled by default', () => {

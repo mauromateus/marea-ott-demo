@@ -74,6 +74,7 @@ Steps are in `docs/decisions/0002-pwa-service-worker.md` ("How to test"). They n
 | Date | Environment | Result |
 |---|---|---|
 | 2026-10-20 | Desktop Chrome 155 on Windows, production build on `localhost`, launched with `?ms_platform=android` | Service worker activated and precached the shell only; live video loaded and sent `ms_event_player_ready` with `ms_platform_origin: android`; live audio played after a click and sent `player_ready` + `video_start`; platform survived route changes and reloads; update toast and Refresh worked. Not a device test. |
+| 2026-10-26 | Desktop browser (app panel), Pages build served under `/marea-ott-demo/` on `localhost` | Home shows 12 real VOD cards in 3 rails; all 12 thumbnails from `thumbs.cdn.mdstrm.com` loaded; no example note. Playback of these medias not tested (11 of 12 have access restrictions). |
 
 ## Pasted reports
 

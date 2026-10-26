@@ -41,12 +41,12 @@ beforeEach(() => {
 afterEach(() => jest.clearAllMocks())
 
 describe('App routes', () => {
-  it('home shows both live cards, the sample rails and the example note', async () => {
+  it('home shows both live cards and the rails, without the example note', async () => {
     renderApp('/')
     expect(await screen.findByRole('heading', { name: 'Marea TV' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Marea Radio' })).toBeInTheDocument()
     expect(screen.getAllByText('EN VIVO').length).toBeGreaterThanOrEqual(2)
-    expect(screen.getByText(/contenido de ejemplo/i)).toBeInTheDocument()
+    expect(screen.queryByText(/contenido de ejemplo/i)).not.toBeInTheDocument()
     marea.rails.forEach((rail) => expect(screen.getByRole('heading', { name: rail.title })).toBeInTheDocument())
   })
 

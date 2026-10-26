@@ -1,0 +1,34 @@
+{
+  "rails": [
+    {
+      "id": "new",
+      "title": "Novedades en Marea",
+      "mediaIds": [
+        "6a01ed2be3cffd5907cc6473",
+        "69c41c314eda11ddd5b8f3b6",
+        "68ddc08020c9f5b3fb985c6c",
+        "6389705e6f47db6ae1b20e72"
+      ]
+    },
+    {
+      "id": "coastal",
+      "title": "Historias de la costa",
+      "mediaIds": [
+        "68f65fc6cde1fc0e88c6ee8b",
+        "69b9e978ee43afb9190d791e",
+        "6074a4842a1182070bc11bae",
+        "67e57380b45163c60e5947d5"
+      ]
+    },
+    {
+      "id": "late",
+      "title": "Marea nocturna",
+      "mediaIds": [
+        "67042377f0ed9c0dd7d22ebd",
+        "67042449cfcf7ca2949e05fb",
+        "6704261e74d6cc0f476ee614",
+        "68c9a42a05004714e78f4ecd"
+      ]
+    }
+  ]
+}

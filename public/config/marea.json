@@ -57,102 +57,45 @@
     {
       "id": "new",
       "title": "Novedades en Marea",
-      "sample": true,
       "items": [
         {
-          "id": "new-1",
-          "title": "Línea de sal",
-          "meta": "Documental · 48 min",
-          "sample": true,
-          "artwork": {
-            "from": "#134E5E",
-            "to": "#2EC4B6",
-            "angle": 120,
-            "glyph": "waves"
+          "id": "6a01ed2be3cffd5907cc6473",
+          "title": "Aragón TV encadena seis meses de récord y consolida su crecimiento",
+          "meta": "35 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_6a01ed2be3cffd5907cc6473_6a01ed2be3cffd5907cc6476_4s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "new-2",
-          "title": "El último ferri",
-          "meta": "Drama · 1 h 32 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1B2A49",
-            "to": "#4C6EF5",
-            "angle": 157,
-            "glyph": "rings"
+          "id": "69c41c314eda11ddd5b8f3b6",
+          "title": "Impacto económico y regulatorio en conductores de Uber en Chile",
+          "meta": "1 min 3 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_69c41c314eda11ddd5b8f3b6_69c41c324eda11ddd5b8f3ca_6s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "new-3",
-          "title": "Algas y humo",
-          "meta": "Gastronomía · 26 min",
-          "sample": true,
-          "artwork": {
-            "from": "#3A1C71",
-            "to": "#FF6B4A",
-            "angle": 194,
-            "glyph": "peaks"
+          "id": "68ddc08020c9f5b3fb985c6c",
+          "title": "Mantenha-se Informado com Transmissões Verificadas de Honduras",
+          "meta": "2 min 14 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_68ddc08020c9f5b3fb985c6c_68ddc08020c9f5b3fb985c80_13s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "new-4",
-          "title": "Luces del puerto",
-          "meta": "Serie · 8 episodios",
-          "sample": true,
-          "artwork": {
-            "from": "#0F4C5C",
-            "to": "#E36414",
-            "angle": 141,
-            "glyph": "dots"
-          }
-        },
-        {
-          "id": "new-5",
-          "title": "Diarios de la marea baja",
-          "meta": "Documental · 52 min",
-          "sample": true,
-          "artwork": {
-            "from": "#14213D",
-            "to": "#2EC4B6",
-            "angle": 178,
-            "glyph": "lines"
-          }
-        },
-        {
-          "id": "new-6",
-          "title": "Barquitos de papel",
-          "meta": "Familiar · 1 h 18 min",
-          "sample": true,
-          "artwork": {
-            "from": "#5F0F40",
-            "to": "#FF6B4A",
-            "angle": 125,
-            "glyph": "sun"
-          }
-        },
-        {
-          "id": "new-7",
-          "title": "Oleaje del norte",
-          "meta": "Deportes · 44 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0B3954",
-            "to": "#BFD7EA",
-            "angle": 162,
-            "glyph": "grid"
-          }
-        },
-        {
-          "id": "new-8",
-          "title": "Agua de cristal",
-          "meta": "Suspenso · 1 h 41 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1D3557",
-            "to": "#F4A261",
-            "angle": 199,
-            "glyph": "arcs"
+          "id": "6389705e6f47db6ae1b20e72",
+          "title": "Mas de 10 cortes OBS Live RTMP ok",
+          "meta": "13 min 48 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_6389705e6f47db6ae1b20e72_6389705e6f47db6ae1b20e7e_83s.jpg",
+            "width": 854,
+            "height": 480
           }
         }
       ]
@@ -160,205 +103,45 @@
     {
       "id": "coastal",
       "title": "Historias de la costa",
-      "sample": true,
       "items": [
         {
-          "id": "coastal-1",
-          "title": "Guardianes de las dunas",
-          "meta": "Documental · 39 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0F4C5C",
-            "to": "#E36414",
-            "angle": 143,
-            "glyph": "peaks"
+          "id": "68f65fc6cde1fc0e88c6ee8b",
+          "title": "Artesanía y Naturaleza: Un Enfoque Sostenible",
+          "meta": "3 min",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_68f65fc6cde1fc0e88c6ee8b_68f65fc6cde1fc0e88c6ee9f_18s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "coastal-2",
-          "title": "Calle del Faro",
-          "meta": "Serie · 10 episodios",
-          "sample": true,
-          "artwork": {
-            "from": "#14213D",
-            "to": "#2EC4B6",
-            "angle": 180,
-            "glyph": "dots"
+          "id": "69b9e978ee43afb9190d791e",
+          "title": "Documental: Naturaleza Salvaje",
+          "meta": "1 min 13 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_69b9e978ee43afb9190d791e_69b9e978ee43afb9190d7921_7s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "coastal-3",
-          "title": "Cocina de agua salada",
-          "meta": "Gastronomía · 24 min",
-          "sample": true,
-          "artwork": {
-            "from": "#5F0F40",
-            "to": "#FF6B4A",
-            "angle": 127,
-            "glyph": "lines"
+          "id": "6074a4842a1182070bc11bae",
+          "title": "Journey Of Life",
+          "meta": "2 min 34 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_6074a4842a1182070bc11bae_6074a4842a1182070bc11bbc_15s.jpg",
+            "width": 640,
+            "height": 360
           }
         },
         {
-          "id": "coastal-4",
-          "title": "La temporada a la deriva",
-          "meta": "Drama · 1 h 27 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0B3954",
-            "to": "#BFD7EA",
-            "angle": 164,
-            "glyph": "sun"
-          }
-        },
-        {
-          "id": "coastal-5",
-          "title": "Cabo de los Ecos",
-          "meta": "Misterio · 1 h 36 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1D3557",
-            "to": "#F4A261",
-            "angle": 201,
-            "glyph": "grid"
-          }
-        },
-        {
-          "id": "coastal-6",
-          "title": "Club de las pozas",
-          "meta": "Infantil · 12 min",
-          "sample": true,
-          "artwork": {
-            "from": "#134E5E",
-            "to": "#2EC4B6",
-            "angle": 148,
-            "glyph": "arcs"
-          }
-        },
-        {
-          "id": "coastal-7",
-          "title": "Señales en la niebla",
-          "meta": "Documental · 57 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1B2A49",
-            "to": "#4C6EF5",
-            "angle": 185,
-            "glyph": "waves"
-          }
-        },
-        {
-          "id": "coastal-8",
-          "title": "Camino de conchas",
-          "meta": "Viajes · 31 min",
-          "sample": true,
-          "artwork": {
-            "from": "#3A1C71",
-            "to": "#FF6B4A",
-            "angle": 132,
-            "glyph": "rings"
-          }
-        }
-      ]
-    },
-    {
-      "id": "sound",
-      "title": "Sonidos del mar",
-      "sample": true,
-      "items": [
-        {
-          "id": "sound-1",
-          "title": "Mezcla Marea de medianoche",
-          "meta": "Música · 1 h 02 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0B3954",
-            "to": "#BFD7EA",
-            "angle": 166,
-            "glyph": "lines"
-          }
-        },
-        {
-          "id": "sound-2",
-          "title": "Olas lentas, vol. 2",
-          "meta": "Ambiental · 48 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1D3557",
-            "to": "#F4A261",
-            "angle": 203,
-            "glyph": "sun"
-          }
-        },
-        {
-          "id": "sound-3",
-          "title": "Sesiones del puerto",
-          "meta": "Música en vivo · 55 min",
-          "sample": true,
-          "artwork": {
-            "from": "#134E5E",
-            "to": "#2EC4B6",
-            "angle": 150,
-            "glyph": "grid"
-          }
-        },
-        {
-          "id": "sound-4",
-          "title": "Horas de azul profundo",
-          "meta": "Ambiental · 1 h 10 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1B2A49",
-            "to": "#4C6EF5",
-            "angle": 187,
-            "glyph": "arcs"
-          }
-        },
-        {
-          "id": "sound-5",
-          "title": "Estática de coral",
-          "meta": "Electrónica · 41 min",
-          "sample": true,
-          "artwork": {
-            "from": "#3A1C71",
-            "to": "#FF6B4A",
-            "angle": 134,
-            "glyph": "waves"
-          }
-        },
-        {
-          "id": "sound-6",
-          "title": "Casete del atardecer",
-          "meta": "Pop · 37 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0F4C5C",
-            "to": "#E36414",
-            "angle": 171,
-            "glyph": "rings"
-          }
-        },
-        {
-          "id": "sound-7",
-          "title": "Bahía del Eco en vivo",
-          "meta": "Música en vivo · 1 h 05 min",
-          "sample": true,
-          "artwork": {
-            "from": "#14213D",
-            "to": "#2EC4B6",
-            "angle": 208,
-            "glyph": "peaks"
-          }
-        },
-        {
-          "id": "sound-8",
-          "title": "Orilla a la luz de la luna",
-          "meta": "Acústica · 34 min",
-          "sample": true,
-          "artwork": {
-            "from": "#5F0F40",
-            "to": "#FF6B4A",
-            "angle": 155,
-            "glyph": "dots"
+          "id": "67e57380b45163c60e5947d5",
+          "title": "08 - Video - 1:59",
+          "meta": "1 min 59 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_67e57380b45163c60e5947d5_67e57380b45163c60e5947e9_12s.jpg",
+            "width": 640,
+            "height": 360
           }
         }
       ]
@@ -366,102 +149,45 @@
     {
       "id": "late",
       "title": "Marea nocturna",
-      "sample": true,
       "items": [
         {
-          "id": "late-1",
-          "title": "Después de la tormenta",
-          "meta": "Suspenso · 1 h 29 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1B2A49",
-            "to": "#4C6EF5",
-            "angle": 189,
-            "glyph": "grid"
+          "id": "67042377f0ed9c0dd7d22ebd",
+          "title": "New New New NewEpisodio 3 - Milochenta - Milochenta - Milochenta",
+          "meta": "36 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_67042377f0ed9c0dd7d22ebd_67042377f0ed9c0dd7d22ece_4s.jpg",
+            "width": 1280,
+            "height": 720
           }
         },
         {
-          "id": "late-2",
-          "title": "Pescadores de noche",
-          "meta": "Documental · 46 min",
-          "sample": true,
-          "artwork": {
-            "from": "#3A1C71",
-            "to": "#FF6B4A",
-            "angle": 136,
-            "glyph": "arcs"
+          "id": "67042449cfcf7ca2949e05fb",
+          "title": "New New New Newepisodio 6 - Milochenta - Milochenta - Milochenta",
+          "meta": "35 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_67042449cfcf7ca2949e05fb_67042449cfcf7ca2949e060c_4s.jpg",
+            "width": 1280,
+            "height": 720
           }
         },
         {
-          "id": "late-3",
-          "title": "Fósforo",
-          "meta": "Ciencia ficción · 1 h 38 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0F4C5C",
-            "to": "#E36414",
-            "angle": 173,
-            "glyph": "waves"
+          "id": "6704261e74d6cc0f476ee614",
+          "title": "New New New NewEpisodio 7 - Milochenta - Milochenta - Milochenta",
+          "meta": "59 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_6704261e74d6cc0f476ee614_6704261e74d6cc0f476ee625_6s.jpg",
+            "width": 1280,
+            "height": 720
           }
         },
         {
-          "id": "late-4",
-          "title": "Estela",
-          "meta": "Drama · 1 h 22 min",
-          "sample": true,
-          "artwork": {
-            "from": "#14213D",
-            "to": "#2EC4B6",
-            "angle": 120,
-            "glyph": "rings"
-          }
-        },
-        {
-          "id": "late-5",
-          "title": "Resaca",
-          "meta": "Serie · 6 episodios",
-          "sample": true,
-          "artwork": {
-            "from": "#5F0F40",
-            "to": "#FF6B4A",
-            "angle": 157,
-            "glyph": "peaks"
-          }
-        },
-        {
-          "id": "late-6",
-          "title": "Robo en la hora azul",
-          "meta": "Crimen · 1 h 44 min",
-          "sample": true,
-          "artwork": {
-            "from": "#0B3954",
-            "to": "#BFD7EA",
-            "angle": 194,
-            "glyph": "dots"
-          }
-        },
-        {
-          "id": "late-7",
-          "title": "Ancla silenciosa",
-          "meta": "Misterio · 1 h 19 min",
-          "sample": true,
-          "artwork": {
-            "from": "#1D3557",
-            "to": "#F4A261",
-            "angle": 141,
-            "glyph": "lines"
-          }
-        },
-        {
-          "id": "late-8",
-          "title": "La larga travesía a nado",
-          "meta": "Deportes · 58 min",
-          "sample": true,
-          "artwork": {
-            "from": "#134E5E",
-            "to": "#2EC4B6",
-            "angle": 178,
-            "glyph": "sun"
+          "id": "68c9a42a05004714e78f4ecd",
+          "title": "calidadsolo240",
+          "meta": "9 min 56 s",
+          "thumbnail": {
+            "url": "https://thumbs.cdn.mdstrm.com/thumbs/5fb533fda0dac907d5454a85/thumb_68c9a42a05004714e78f4ecd_68c9a42a05004714e78f4ee2_60s.jpg",
+            "width": 426,
+            "height": 240
           }
         }
       ]

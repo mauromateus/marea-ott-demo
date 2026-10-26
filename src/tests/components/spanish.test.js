@@ -62,10 +62,10 @@ describe('key components render Spanish', () => {
     expect(screen.getByRole('link', { name: 'Abrir radio' })).toBeInTheDocument()
   })
 
-  it('Rail card click explains that sample content cannot be played', () => {
+  it('Rail card click explains that videos cannot be played yet', () => {
     renderWithProviders(<Rail rail={config.rails[0]} />, { withAudio: false })
     fireEvent.click(screen.getAllByRole('button')[0])
-    expect(screen.getByRole('status')).toHaveTextContent(`${config.rails[0].items[0].title} es contenido de ejemplo y no se puede reproducir en esta demostración.`)
+    expect(screen.getByRole('status')).toHaveTextContent(`${config.rails[0].items[0].title}: en esta demostración todavía no se pueden reproducir los videos a pedido.`)
   })
 
   it('MiniPlayer labels and buttons', () => {

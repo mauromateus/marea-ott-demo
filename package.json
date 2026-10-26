@@ -13,6 +13,7 @@
     "test": "react-scripts test --testPathPattern=src/tests/",
     "serve:build": "npx serve -s build",
     "icons": "node scripts/generate-icons.js",
+    "sync:media": "node scripts/sync-media.js",
     "preview:pages": "node scripts/preview-pages.js",
     "deploy:pages": "npm run build:pages && node scripts/deploy-pages.js"
   },

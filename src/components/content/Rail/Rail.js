@@ -38,9 +38,10 @@ const Notice = styled.p`
 `
 
 // Swiper's React wrapper only recognises a plain SwiperSlide as a child, so slides are styled from here.
+// Posters are portrait artwork (narrow slides); real medias come with 16:9 thumbnails (wide slides).
 const Track = styled.div`
   .swiper-slide {
-    width: clamp(130px, 22vw, 180px);
+    width: ${({ $wide }) => ($wide ? 'clamp(210px, 32vw, 280px)' : 'clamp(130px, 22vw, 180px)')};
     padding: 6px 2px 10px;
   }
 `
@@ -67,6 +68,23 @@ const Poster = styled.div`
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 `
 
+const Thumbnail = styled.div`
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: ${({ $ratio }) => $ratio * 100}%; /* height / width; aspect-ratio is missing on older TV browsers */
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`
+
 const Meta = styled.div`
   padding: 10px 2px 0;
 
@@ -86,6 +104,7 @@ export default function Rail ({ rail }) {
   const [swiper, setSwiper] = useState(null)
   const [notice, setNotice] = useState('')
   const a11y = useMemo(getA11y, [])
+  const wide = rail.items.some((item) => item.thumbnail)
 
   const handleFocus = (index) => {
     // Keep the focused card in view; the browser would otherwise scroll the overflow-hidden container.
@@ -99,7 +118,7 @@ export default function Rail ({ rail }) {
     <Section aria-labelledby={`rail-${rail.id}`}>
       <Heading id={`rail-${rail.id}`}>{rail.title}</Heading>
       <Notice role='status'>{notice}</Notice>
-      <Track>
+      <Track $wide={wide}>
         <Swiper
           onSwiper={setSwiper}
           slidesPerView='auto'
@@ -113,10 +132,16 @@ export default function Rail ({ rail }) {
               <CardButton
                 type='button'
                 onFocus={() => handleFocus(index)}
-                onClick={() => setNotice(translate('home.rail.exampleNotice', { title: item.title }))}
+                onClick={() => setNotice(translate(item.thumbnail ? 'home.rail.vodNotice' : 'home.rail.exampleNotice', { title: item.title }))}
               >
                 <Poster>
-                  <Artwork from={item.artwork.from} to={item.artwork.to} angle={item.artwork.angle} glyph={item.artwork.glyph} />
+                  {item.thumbnail
+                    ? (
+                      <Thumbnail $ratio={item.thumbnail.height / item.thumbnail.width}>
+                        <img src={item.thumbnail.url} alt='' loading='lazy' />
+                      </Thumbnail>
+                      )
+                    : <Artwork from={item.artwork.from} to={item.artwork.to} angle={item.artwork.angle} glyph={item.artwork.glyph} />}
                 </Poster>
                 <Meta>
                   <strong>{item.title}</strong>
