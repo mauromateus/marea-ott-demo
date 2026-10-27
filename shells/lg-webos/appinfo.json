@@ -1,0 +1,14 @@
+{
+  "id": "io.github.mauromateus.marea",
+  "version": "0.1.0",
+  "vendor": "Marea demo",
+  "type": "web",
+  "main": "index.html",
+  "title": "Marea",
+  "appDescription": "Marea: TV y radio en vivo (demo)",
+  "icon": "icon.png",
+  "largeIcon": "largeIcon.png",
+  "splashBackground": "splashBackground.png",
+  "iconColor": "#2EC4B6",
+  "resolution": "1920x1080"
+}

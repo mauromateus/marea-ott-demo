@@ -4,3 +4,7 @@ build/
 .env.local
 .env.*.local
 *.log
+
+# webOS shell build output
+shells/lg-webos/dist/
+*.ipk

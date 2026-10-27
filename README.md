@@ -167,3 +167,7 @@ docs/                       decisions (ADRs), PORTING, test-log, assetlinks exam
 - Rails are filled by `node scripts/sync-media.js` (ids in `scripts/media-selection.json`, token from the local `.env`, never published). Only id, title, duration and thumbnail url reach the config. Cards support two shapes: `thumbnail` (real media) and `artwork` + `"sample": true` (gradient placeholder with the "Contenido de ejemplo" note).
 - Live media ids live only in `public/config/marea.json`.
 - `docs/assetlinks.example.json` is a template with placeholder package name and fingerprint. The real file must be served by the real domain at `/.well-known/assetlinks.json`.
+
+## Native shells
+
+- `shells/lg-webos/`: LG webOS TV hosted web app (redirects to the PWA with `ms_platform=lg-tv`). See its README for the install steps.

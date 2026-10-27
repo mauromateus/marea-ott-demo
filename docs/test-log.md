@@ -76,6 +76,7 @@ Steps are in `docs/decisions/0002-pwa-service-worker.md` ("How to test"). They n
 | 2026-10-20 | Desktop Chrome 155 on Windows, production build on `localhost`, launched with `?ms_platform=android` | Service worker activated and precached the shell only; live video loaded and sent `ms_event_player_ready` with `ms_platform_origin: android`; live audio played after a click and sent `player_ready` + `video_start`; platform survived route changes and reloads; update toast and Refresh worked. Not a device test. |
 | 2026-10-26 | Desktop browser (app panel), Pages build served under `/marea-ott-demo/` on `localhost` | Home shows 12 real VOD cards in 3 rails; all 12 thumbnails from `thumbs.cdn.mdstrm.com` loaded; no example note. Playback not tested in that run. |
 | 2026-10-26 | Embedded browser on `https://mauromateus.github.io/marea-ott-demo/`, Lightning player called with `type: 'media'` for the 12 medias | 11 of 12 start and advance (7 straight away, 5 after a 3-6 s pre-roll ad from the account); `69b9e978ee43afb9190d791e` answers 403 on m3u8/mp4/mpd/json from the platform, with or without Referer. 11 of 12 have `access_restrictions.enabled`, and it did not block playback from the github.io origin. |
+| 2026-10-27 | LG 60UN7310PDA, webOS TV 5.6.2, Web Browser app, `https://mauromateus.github.io/marea-ott-demo/` | Reported by the tester: everything plays (live TV, radio and VOD). Platform shown by diagnostics and the pre-roll behaviour were not recorded. Not an installed webOS app. |
 
 ## Pasted reports
 
