@@ -30,7 +30,7 @@ Then `npm run deploy:pages` publishes it. Build and publish take about two minut
 
 ## Undo
 
-`npm run demo:revert` restores tagline and color, then `node scripts/sync-media.js` restores the three base rails, then `npm run deploy:pages`.
+`npm run demo:revert` restores the tagline, the color and the three base rails in one run (it uses the default selection), then `npm run deploy:pages`.
 
 ## If something does not change
 
