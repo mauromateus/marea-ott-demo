@@ -1,4 +1,4 @@
-const { pickThumbnail, formatDuration, buildItem, buildRails, parseEnv } = require('../../../scripts/sync-media')
+const { pickThumbnail, formatDuration, buildItem, buildRails, parseEnv, parseArgs, applyBranding } = require('../../../scripts/sync-media')
 
 const thumb = (size, extra = {}) => ({
   url: `https://thumbs.cdn.mdstrm.com/thumbs/acc/thumb_${size}.jpg`,
@@ -115,6 +115,17 @@ describe('buildRails', () => {
     expect(() => buildRails(dup, list)).toThrow(/m1/)
   })
 
+  it('accepts a repeated id only when the selection says so', () => {
+    const dup = { allowRepeats: true, rails: [{ id: 'a', title: 'A', mediaIds: ['m1'] }, { id: 'b', title: 'B', mediaIds: ['m1', 'm2'] }] }
+    const rails = buildRails(dup, list)
+    expect(rails.map((rail) => rail.items.length)).toEqual([1, 2])
+  })
+
+  it('still rejects an id repeated inside the same rail even when repeats are allowed', () => {
+    const dup = { allowRepeats: true, rails: [{ id: 'a', title: 'A', mediaIds: ['m1', 'm1'] }] }
+    expect(() => buildRails(dup, list)).toThrow(/m1/)
+  })
+
   it('rejects an empty selection', () => {
     expect(() => buildRails({ rails: [] }, list)).toThrow()
     expect(() => buildRails({ rails: [{ id: 'a', title: 'A', mediaIds: [] }] }, list)).toThrow()
@@ -124,5 +135,48 @@ describe('buildRails', () => {
 describe('parseEnv', () => {
   it('reads KEY=value lines and skips comments and blanks', () => {
     expect(parseEnv('# c\n\nMS_API_TOKEN=abc=def\n OTHER = x \n')).toEqual({ MS_API_TOKEN: 'abc=def', OTHER: 'x' })
+  })
+})
+
+describe('parseArgs', () => {
+  it('reads the flags and ignores the rest', () => {
+    expect(parseArgs(['node', 'sync-media.js', '--dry-run', '--selection', 'a.json', '--tagline', 'Hola mundo', '--accent', '#9B5DE5']))
+      .toEqual({ dryRun: true, selection: 'a.json', tagline: 'Hola mundo', accent: '#9B5DE5' })
+  })
+
+  it('defaults to a real run with no overrides', () => {
+    expect(parseArgs(['node', 'sync-media.js'])).toEqual({ dryRun: false, selection: undefined, tagline: undefined, accent: undefined })
+  })
+
+  it('fails when a flag has no value', () => {
+    expect(() => parseArgs(['node', 'x', '--tagline'])).toThrow(/--tagline/)
+    expect(() => parseArgs(['node', 'x', '--selection', '--dry-run'])).toThrow(/--selection/)
+  })
+})
+
+describe('applyBranding', () => {
+  const config = { brand: { name: 'Marea', tagline: 'old', colors: { accent: '#2EC4B6', live: '#FF6B4A' } }, rails: [] }
+
+  it('changes only the tagline and the accent that were given', () => {
+    const next = applyBranding(config, { tagline: 'nuevo', accent: '#9B5DE5' })
+    expect(next.brand.tagline).toBe('nuevo')
+    expect(next.brand.colors).toEqual({ accent: '#9B5DE5', live: '#FF6B4A' })
+    expect(next.brand.name).toBe('Marea')
+  })
+
+  it('does not mutate the input and returns it untouched without overrides', () => {
+    applyBranding(config, { tagline: 'x' })
+    expect(config.brand.tagline).toBe('old')
+    expect(applyBranding(config, {})).toEqual(config)
+  })
+
+  it('rejects an accent that is not a 6-digit hex color', () => {
+    expect(() => applyBranding(config, { accent: 'purple' })).toThrow(/accent/)
+    expect(() => applyBranding(config, { accent: '#abc' })).toThrow(/accent/)
+  })
+
+  it('rejects an empty or very long tagline', () => {
+    expect(() => applyBranding(config, { tagline: '   ' })).toThrow(/tagline/)
+    expect(() => applyBranding(config, { tagline: 'x'.repeat(141) })).toThrow(/tagline/)
   })
 })

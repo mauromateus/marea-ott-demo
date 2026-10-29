@@ -1,5 +1,7 @@
 // Fills the home rails of public/config/marea.json with real VOD medias from the Mediastream test account.
-// Usage: node scripts/sync-media.js [--dry-run]
+// Usage: node scripts/sync-media.js [--dry-run] [--selection <file>] [--tagline <text>] [--accent <#rrggbb>]
+// --selection: another ids file (default scripts/media-selection.json), used by the demo scenario (docs/DEMO.md).
+// --tagline / --accent: override the brand tagline and accent color in the same run.
 //
 // Reads the ids to show from scripts/media-selection.json and the API token from the local .env (MS_API_TOKEN).
 // The token is only used here, on this machine: the config keeps public metadata only (id, title, duration, thumbnail url).
@@ -9,7 +11,7 @@ const path = require('path')
 const API_BASE = 'https://platform.mediastre.am/api'
 const TARGET_THUMBNAIL_WIDTH = 640
 const ROOT = path.join(__dirname, '..')
-const SELECTION_FILE = path.join(__dirname, 'media-selection.json')
+const DEFAULT_SELECTION_FILE = path.join(__dirname, 'media-selection.json')
 const CONFIG_FILE = path.join(ROOT, 'public', 'config', 'marea.json')
 const ENV_FILE = path.join(ROOT, '.env')
 
@@ -21,6 +23,42 @@ const parseEnv = (text) => String(text).split(/\r?\n/).reduce((env, line) => {
   }
   return { ...env, [trimmed.slice(0, at).trim()]: trimmed.slice(at + 1).trim() }
 }, {})
+
+const VALUE_FLAGS = ['--selection', '--tagline', '--accent']
+
+const parseArgs = (argv) => {
+  const args = argv.slice(2)
+  const options = { dryRun: args.includes('--dry-run'), selection: undefined, tagline: undefined, accent: undefined }
+  VALUE_FLAGS.forEach((flag) => {
+    const at = args.indexOf(flag)
+    if (at === -1) {
+      return
+    }
+    const value = args[at + 1]
+    if (value === undefined || value.startsWith('--')) {
+      throw new Error(`${flag} needs a value`)
+    }
+    options[flag.slice(2)] = value
+  })
+  return options
+}
+
+const applyBranding = (config, { tagline, accent } = {}) => {
+  if (tagline !== undefined && (!String(tagline).trim() || String(tagline).length > 140)) {
+    throw new Error('tagline must have between 1 and 140 characters')
+  }
+  if (accent !== undefined && !/^#[0-9a-f]{6}$/i.test(accent)) {
+    throw new Error('accent must be a color like #2EC4B6')
+  }
+  return {
+    ...config,
+    brand: {
+      ...config.brand,
+      ...(tagline !== undefined && { tagline: String(tagline).trim() }),
+      colors: { ...config.brand.colors, ...(accent !== undefined && { accent }) }
+    }
+  }
+}
 
 const parseSize = (size) => {
   const match = /^(\d+)x(\d+)$/.exec(String(size || ''))
@@ -76,16 +114,18 @@ const buildRails = (selection, medias) => {
     throw new Error('The selection needs at least one rail, and every rail needs at least one media id')
   }
   const byId = new Map(medias.map((media) => [media._id, media]))
-  const seen = new Set()
+  const seenAnywhere = new Set()
 
   return rails.map((rail) => ({
     id: rail.id,
     title: rail.title,
-    items: rail.mediaIds.map((id) => {
-      if (seen.has(id)) {
+    items: rail.mediaIds.map((id, index) => {
+      // A media may appear in several rails only when the selection opts in; never twice in one rail.
+      const repeated = selection.allowRepeats ? rail.mediaIds.indexOf(id) !== index : seenAnywhere.has(id)
+      if (repeated) {
         throw new Error(`Media ${id} appears more than once in the selection`)
       }
-      seen.add(id)
+      seenAnywhere.add(id)
       if (!byId.has(id)) {
         throw new Error(`Media ${id} was not found in the account`)
       }
@@ -104,19 +144,19 @@ const fetchMedia = async (id, token) => {
 }
 
 const main = async () => {
-  const dryRun = process.argv.includes('--dry-run')
+  const { dryRun, selection: selectionFile, tagline, accent } = parseArgs(process.argv)
   const token = parseEnv(fs.existsSync(ENV_FILE) ? fs.readFileSync(ENV_FILE, 'utf8') : '').MS_API_TOKEN
   if (!token) {
     throw new Error('MS_API_TOKEN is missing: put it in .env (see .env.example)')
   }
 
-  const selection = JSON.parse(fs.readFileSync(SELECTION_FILE, 'utf8'))
-  const ids = selection.rails.flatMap((rail) => rail.mediaIds)
+  const selection = JSON.parse(fs.readFileSync(selectionFile ? path.resolve(selectionFile) : DEFAULT_SELECTION_FILE, 'utf8'))
+  const ids = [...new Set(selection.rails.flatMap((rail) => rail.mediaIds))]
   const medias = await Promise.all(ids.map((id) => fetchMedia(id, token)))
   const rails = buildRails(selection, medias)
 
   const config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'))
-  const next = { ...config, rails }
+  const next = { ...applyBranding(config, { tagline, accent }), rails }
   rails.forEach((rail) => console.log(`${rail.title}: ${rail.items.map((item) => `${item.title} (${item.meta})`).join(' | ')}`))
 
   if (dryRun) {
@@ -127,7 +167,7 @@ const main = async () => {
   console.log('public/config/marea.json updated.')
 }
 
-module.exports = { parseEnv, pickThumbnail, formatDuration, buildItem, buildRails }
+module.exports = { parseEnv, parseArgs, applyBranding, pickThumbnail, formatDuration, buildItem, buildRails }
 
 if (require.main === module) {
   main().catch((err) => {

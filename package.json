@@ -14,6 +14,8 @@
     "serve:build": "npx serve -s build",
     "icons": "node scripts/generate-icons.js",
     "sync:media": "node scripts/sync-media.js",
+    "demo:apply": "node scripts/sync-media.js --selection scripts/media-selection.demo.json --tagline \"Cambio en vivo: este texto, el color y la fila nueva llegaron sin tocar la app\" --accent \"#9B5DE5\"",
+    "demo:revert": "node scripts/sync-media.js --tagline \"TV y radio en vivo, directo desde la costa.\" --accent \"#2EC4B6\"",
     "preview:pages": "node scripts/preview-pages.js",
     "deploy:pages": "npm run build:pages && node scripts/deploy-pages.js"
   },
